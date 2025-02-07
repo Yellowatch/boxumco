@@ -1,0 +1,100 @@
+# ================================
+# General
+# ================================
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ================================
+# Python / Django
+# ================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env
+*.env
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+.eggs/
+*.egg-info/
+.installed.cfg
+
+# Django stuff:
+*.pot
+*.pyc
+local_settings.py
+
+# If using SQLite
+db.sqlite3
+db.sqlite3-journal
+
+# Django migrations (optional, keep these if you want to track migrations)
+# */migrations/__pycache__/
+# */migrations/*.pyc
+
+# ================================
+# Node / React
+# ================================
+
+# Node modules
+node_modules/
+
+# React build output (Create React App)
+build/
+dist/
+
+# Temporary files
+*.tmp
+*.temp
+
+# ================================
+# IDEs / Editors
+# ================================
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+*.iml
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# ================================
+# Other
+# ================================
+
+# Coverage reports
+coverage/
+
+# Mac OS X folder attributes
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.Trashes
+
+# End of file
