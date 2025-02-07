@@ -1,1 +1,1 @@
-# boxum-client
+# boxum
