@@ -10,7 +10,6 @@ from rest_framework_simplejwt.views import (
 from .serializers import MyTokenObtainPairSerializer
 
 class MyTokenObtainPairView(TokenObtainPairView):
-    # You can customize the serializer if needed
     serializer_class = MyTokenObtainPairSerializer
 
 class MyTokenRefreshView(TokenRefreshView):

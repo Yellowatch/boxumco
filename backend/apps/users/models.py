@@ -7,13 +7,18 @@ class CustomUser(AbstractUser):
         ('supplier', 'Supplier'),
     )
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='client')
+    email = models.EmailField(unique=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
         return f"{self.username} ({self.user_type})"
 
 class Client(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
-    name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
     number = models.CharField(max_length=20)
     email = models.EmailField()
     address = models.CharField(max_length=255)
@@ -24,7 +29,8 @@ class Client(models.Model):
 
 class Supplier(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
-    name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
     number = models.CharField(max_length=20)
     email = models.EmailField()
     address = models.CharField(max_length=255)

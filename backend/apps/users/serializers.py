@@ -1,19 +1,40 @@
 from rest_framework import serializers
 from .models import CustomUser, Client, Supplier
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.auth import authenticate
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
+    # @classmethod
+    # def get_token(cls, user):
+    #     token = super().get_token(user)
+    #     # Add custom claims
+    #     token['name'] = user.username
+    #     token['email'] = user.email
+    #     token['user_type'] = user.user_type 
+    #     return token
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(required=True, write_only=True)
 
-        # Add custom claims
-        token['name'] = user.username
-        token['email'] = user.email
-        token['user_type'] = user.user_type 
+    def validate(self, attrs):
+        email = attrs.get("email")
+        password = attrs.get("password")
 
-        return token
+        user = authenticate(username=email, password=password)
+
+        if user is None:
+            raise serializers.ValidationError("Invalid email or password")
+
+        refresh = self.get_token(user)
+
+        data = {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        }
+
+        data.update({"user_id": user.id, "email": user.email, "user_type": user.user_type})
+
+        return data
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -30,7 +51,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
-        fields = ['name', 'number', 'email', 'address', 'postcode', 'company_name', 'dob', 'password']
+        fields = ['first_name', 'last_name', 'number', 'email', 'address', 'postcode', 'company_name', 'dob', 'password']
 
     def create(self, validated_data):
         user_data = {
@@ -49,7 +70,7 @@ class SupplierSerializer(serializers.ModelSerializer):
     class Meta:
         model = Supplier
         fields = [
-            'name', 'number', 'email', 'address', 'postcode', 'company_name', 'company_number', 
+            'first_name', 'last_name', 'number', 'email', 'address', 'postcode', 'company_name', 'company_number', 
             'dob', 'company_address', 'company_postcode', 'company_type', 'company_description', 
             'company_logo', 'subcategories', 'password'
         ]

@@ -16,8 +16,8 @@ const useAxios = <T,>(url: string, options = {}): UseAxiosResult<T> => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axiosInstance(url, options);
-        setData(response.data);
+        const response = await axiosInstance({ url, ...options });
+        setData(response.data as T);
         setError(null);
       } catch (err: any) {
         setError(err.response?.data?.message || err.message);

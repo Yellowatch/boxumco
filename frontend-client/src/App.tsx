@@ -1,20 +1,27 @@
-import './App.css'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import HomePage from './pages/HomePage';
-import RegisterPage from './pages/RegisterPage';
+import HomePage from '@/pages/HomePage';
+import RegisterPage from '@/pages/RegisterPage';
+import Login from '@/pages/LoginPage';
+import { AuthProvider } from '@/context/AuthContext';
+import Navbar from '@/components/Navbar';
+import { ThemeProvider } from "@/components/theme-provider"
 
 
 function App() {
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-        </Routes>
-      </Router>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <AuthProvider>
+          <Router>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+          </Router>
+        </AuthProvider>
+      </ThemeProvider>
     </>
   );
 }
