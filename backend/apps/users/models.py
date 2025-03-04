@@ -23,7 +23,7 @@ class Client(models.Model):
     email = models.EmailField()
     address = models.CharField(max_length=255)
     postcode = models.CharField(max_length=20)
-    company_name = models.CharField(max_length=255)
+    company_name = models.CharField(max_length=255, blank=True, null=True)
     dob = models.DateField()
     password = models.CharField(max_length=128)
 

@@ -2,17 +2,10 @@ from rest_framework import serializers
 from .models import CustomUser, Client, Supplier
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
+from django.db import IntegrityError
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    # @classmethod
-    # def get_token(cls, user):
-    #     token = super().get_token(user)
-    #     # Add custom claims
-    #     token['name'] = user.username
-    #     token['email'] = user.email
-    #     token['user_type'] = user.user_type 
-    #     return token
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True, write_only=True)
 
@@ -44,8 +37,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        user = CustomUser.objects.create_user(**validated_data)
-        return user
+        try:
+            user = CustomUser.objects.create_user(**validated_data)
+            return user
+        except IntegrityError:
+            raise serializers.ValidationError({"email": "A user with that email already exists."})
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -60,10 +56,13 @@ class ClientSerializer(serializers.ModelSerializer):
             'password': validated_data['password'],
             'user_type': 'client'
         }
-        user = CustomUserSerializer.create(CustomUserSerializer(), validated_data=user_data)
-        validated_data['user'] = user
-        client = Client.objects.create(**validated_data)
-        return client
+        try:
+            user = CustomUserSerializer.create(CustomUserSerializer(), validated_data=user_data)
+            validated_data['user'] = user
+            client = Client.objects.create(**validated_data)
+            return client
+        except IntegrityError:
+            raise serializers.ValidationError({"email": "A user with that email already exists."})
 
 
 class SupplierSerializer(serializers.ModelSerializer):
@@ -82,7 +81,10 @@ class SupplierSerializer(serializers.ModelSerializer):
             'password': validated_data['password'],
             'user_type': 'supplier'
         }
-        user = CustomUserSerializer.create(CustomUserSerializer(), validated_data=user_data)
-        validated_data['user'] = user
-        supplier = Supplier.objects.create(**validated_data)
-        return supplier
+        try:
+            user = CustomUserSerializer.create(CustomUserSerializer(), validated_data=user_data)
+            validated_data['user'] = user
+            supplier = Supplier.objects.create(**validated_data)
+            return supplier
+        except IntegrityError:
+            raise serializers.ValidationError({"email": "A user with that email already exists."})

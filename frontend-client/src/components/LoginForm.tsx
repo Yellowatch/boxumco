@@ -1,4 +1,3 @@
-"use client"
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -86,7 +85,7 @@ export function LoginForm() {
                             <FormItem>
                                 <FormLabel>Password</FormLabel>
                                 <FormControl>
-                                    <Input {...field} />
+                                    <Input {...field} type="password" />
                                 </FormControl>
                                 <FormDescription>
                                     Enter the password you used to sign up.

@@ -8,11 +8,32 @@ import {
     NavigationMenuTrigger,
     NavigationMenuViewport,
 } from "@/components/ui/navigation-menu"
-import { ModeToggle } from "@/components/mode-toggle"
 
-import { UserRound } from 'lucide-react';
+import { ModeToggle } from "@/components/mode-toggle"
+import { Button } from "@/components/ui/button"
+
+import { LoggedInNavItems } from "./LoggedInNavItems";
+
 import { useAuth } from "@/context/AuthContext"
+import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react";
+import NavItemsCentre from "./NavItemsCentre";
+
+/*
+- Navbar
+    - Services
+        - Accounting
+        - Legal documents
+        - Consulting
+    - Suppliers
+        - Manufacture
+        - Wholesale
+        - Catering
+    - Tenders
+    - Distribution
+        - 3PL
+        - Delivery
+*/
 
 function Navbar() {
     const { user, logout } = useAuth();
@@ -30,26 +51,20 @@ function Navbar() {
         logout();
     };
 
+    const navigate = useNavigate();
+
     return (
         <header className="flex items-center justify-between p-4">
             {/* Left Section: Logo */}
             <div className="flex items-center">
-                <img src="/vite.svg" alt="Logo" className="h-8 w-auto" />
+                <Button variant="ghost" size="default" onClick={() => navigate('/')} className="cursor-pointer">
+                    <img src="/boxumCo.png" alt="Logo" className="h-8 w-auto" />
+                </Button>
             </div>
             {/* Middle Section: Navigation Menu */}
             <div className="flex-1 flex justify-center">
-                <NavigationMenu>
-                    <NavigationMenuList>
-                        <NavigationMenuItem>
-                            <NavigationMenuLink href="/">Home</NavigationMenuLink>
-                        </NavigationMenuItem>
-                    </NavigationMenuList>
-                </NavigationMenu>
+                <NavItemsCentre/>
             </div>
-            {/* Right Section: Mode Toggle */}
-            {/* <div className="flex items-center space-x-4">
-                <ModeToggle />
-            </div> */}
             {/* Right Section: Auth Links */}
             <div className="flex items-center space-x-4">
                 <NavigationMenu>
@@ -57,23 +72,7 @@ function Navbar() {
                         {userEmail || user ? (
                             <>
                                 <NavigationMenuItem>
-                                    <NavigationMenuTrigger>
-                                        <UserRound />
-                                    </NavigationMenuTrigger>
-                                    <NavigationMenuContent>
-                                        <ul className="">
-                                            <li>
-                                                <NavigationMenuLink href="/profile">{userEmail}</NavigationMenuLink>
-                                            </li>
-                                            <li>
-                                                <NavigationMenuLink asChild>
-                                                    <button onClick={onClickLogout} className="cursor-pointer">
-                                                        Logout
-                                                    </button>
-                                                </NavigationMenuLink>
-                                            </li>
-                                        </ul>
-                                    </NavigationMenuContent>
+                                    <LoggedInNavItems userEmail={userEmail} onClickLogout={onClickLogout} />
                                 </NavigationMenuItem>
                             </>
                         ) : (

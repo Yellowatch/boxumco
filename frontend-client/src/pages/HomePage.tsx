@@ -1,10 +1,20 @@
-import React from 'react';
+import { Button } from '@/components/ui/button';
+import { toast } from "sonner"
 
-const HomePage: React.FC = () => {
+const HomePage = () => {
+
+    const onClickButton = () => {
+        console.log('Button clicked');
+        toast(
+            <div>
+                <p>You have successfully registered!</p>
+            </div>
+        );
+    };
+
     return (
         <div className='container'>
-            <h1>Welcome to the Home Page</h1>
-            <p>This is the homepage of our application.</p>
+            <Button onClick={onClickButton}>Toast</Button>
         </div>
     );
 };

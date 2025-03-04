@@ -5,6 +5,7 @@ import Login from '@/pages/LoginPage';
 import { AuthProvider } from '@/context/AuthContext';
 import Navbar from '@/components/Navbar';
 import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/sonner"
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
               <Route path="/login" element={<Login />} />
             </Routes>
           </Router>
+          <Toaster />
         </AuthProvider>
       </ThemeProvider>
     </>

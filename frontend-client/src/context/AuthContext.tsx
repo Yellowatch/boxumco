@@ -7,6 +7,7 @@ interface AuthContextType {
   refresh_token: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  register: (first_name: string, last_name: string, email: string, number: string, address: string, postcode: string, company_name: string, dob: string, password: string) => Promise<{ success: boolean; data?: any; error?: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -49,6 +50,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('user_type');
   };
 
+  const register = async (first_name: string, last_name: string, email: string, number: string, address: string, postcode: string, company_name: string, dob: string, password: string) => {
+    try {
+      const response = await axiosInstance.post('/api/users/clients/', { first_name, last_name, email, number, address, postcode, company_name, dob, password });
+      return { success: true, data: response.data };
+    } catch (error: any) {
+      return { success: false, error: error.response?.data };
+    }
+  };
+
   useEffect(() => {
     // Optionally, try to restore auth state from localStorage
     const storedAccessToken = localStorage.getItem('access_token');
@@ -61,7 +71,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, access_token, refresh_token, login, logout }}>
+    <AuthContext.Provider value={{ user, access_token, refresh_token, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );
