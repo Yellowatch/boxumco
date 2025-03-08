@@ -1,14 +1,27 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import generics
+from .models import Client, Supplier
+from .serializers import ClientSerializer, SupplierSerializer
+from rest_framework.permissions import AllowAny
 
-class UserProfileView(APIView):
-    permission_classes = [IsAuthenticated]
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+from .serializers import MyTokenObtainPairSerializer
 
-    def get(self, request):
-        user = request.user
-        return Response({
-            'username': user.username,
-            'email': user.email,
-            'user_type': getattr(user, 'user_type', 'N/A'),
-        })
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
+
+class MyTokenRefreshView(TokenRefreshView):
+    # You can customize the serializer if needed
+    pass
+
+class ClientCreateView(generics.CreateAPIView):
+    permission_classes = [AllowAny]
+    queryset = Client.objects.all()
+    serializer_class = ClientSerializer
+
+class SupplierCreateView(generics.CreateAPIView):
+    permission_classes = [AllowAny]
+    queryset = Supplier.objects.all()
+    serializer_class = SupplierSerializer

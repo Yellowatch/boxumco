@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
 // Request interceptor: Attach access token if available
 axiosInstance.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem('accessToken'); // Using a separate key for access token
+    const accessToken = localStorage.getItem('access_token'); // Using a separate key for access token
     if (accessToken) {
       if (!config.headers) {
         config.headers = {};
@@ -29,23 +29,24 @@ axiosInstance.interceptors.response.use(
     if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const refreshToken = localStorage.getItem('refreshToken'); // Retrieve the refresh token
+        const refreshToken = localStorage.getItem('refresh_token'); // Retrieve the refresh token
         if (!refreshToken) {
           // No refresh token available, so reject the error
           return Promise.reject(error);
         }
         // Request a new access token using the refresh token
-        const refreshResponse = await axios.post('http://localhost:8000/auth/refresh', { token: refreshToken });
+        console.log('Refreshing token...');
+        const refreshResponse = await axios.post('/api/users/token/refresh/', { token: refreshToken });
         const { accessToken: newAccessToken } = refreshResponse.data as { accessToken: string };
         // Store the new access token
-        localStorage.setItem('accessToken', newAccessToken);
+        localStorage.setItem('access_token', newAccessToken);
         // Update the Authorization header and retry the original request
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         // If the refresh fails, clear tokens and reject
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
         return Promise.reject(refreshError);
       }
     }
