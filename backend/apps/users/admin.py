@@ -7,15 +7,13 @@ class CustomUserAdmin(admin.ModelAdmin):
     list_filter = ('user_type', 'is_staff', 'is_active')
 
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'number', 'email', 'address', 'postcode', 'company_name', 'dob', 'user')
-    search_fields = ('name', 'email', 'company_name')
+    list_display = ('user', 'company_name')
+    search_fields = ('user__username', 'user__email', 'company_name')
     list_filter = ('company_name',)
 
 class SupplierAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'number', 'email', 'address', 'postcode', 'company_name', 'company_number', 
-                    'dob', 'company_address', 'company_postcode', 'company_type', 'company_description', 
-                    'company_logo', 'subcategories', 'user')
-    search_fields = ('name', 'email', 'company_name', 'company_number')
+    list_display = ('user', 'company_name', 'company_number', 'company_address', 'company_postcode', 'company_type', 'company_description', 'company_logo', 'subcategories')
+    search_fields = ('user__username', 'user__email', 'company_name', 'company_number')
     list_filter = ('company_name', 'company_type')
 
 admin.site.register(CustomUser, CustomUserAdmin)

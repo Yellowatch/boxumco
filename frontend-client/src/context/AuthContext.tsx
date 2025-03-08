@@ -5,7 +5,7 @@ interface AuthContextType {
   user: any;
   access_token: string | null;
   refresh_token: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<{ success: boolean; data?: any; error?: any }>;
   logout: () => void;
   register: (first_name: string, last_name: string, email: string, number: string, address: string, postcode: string, company_name: string, dob: string, password: string) => Promise<{ success: boolean; data?: any; error?: any }>;
 }
@@ -24,7 +24,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     try {
       const response = await axiosInstance.post('/api/users/token/', { email, password });
-      console.log(response.data);
       const { refresh, access, email: userEmail, user_id, user_type } = response.data as { refresh: string, access: string, email: string, user_id: any, user_type: string };
       setAccessToken(access);
       setRefreshToken(refresh);
@@ -34,9 +33,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem('refresh_token', refresh);
       localStorage.setItem('user_email', email);
       localStorage.setItem('user_type', user_type);
+      return { success: true, data: response.data };
     } catch (error: any) {
-      // You might want to surface this error to your UI
-      throw new Error(error.response?.data?.message || "Login failed");
+      return { success: false, error: error.response?.data };
     }
   };
 

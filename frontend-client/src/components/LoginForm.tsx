@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
 import { Button } from "@/components/ui/button"
 import {
     Form,
@@ -17,6 +15,14 @@ import {
     FormMessage,
 } from "./ui/form"
 import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
+import { AlertCircle } from "lucide-react"
+import {
+    Alert,
+    AlertDescription,
+    AlertTitle,
+} from "@/components/ui/alert"
 
 const formSchema = z.object({
     email: z.string().email({
@@ -42,20 +48,29 @@ export function LoginForm() {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
-
         setLoading(true);
         setErrorMsg('');
-        try {
-            await login(values.email, values.password);
-            navigate('/'); // or redirect as needed
-        } catch (error: any) {
-            setErrorMsg(error.message);
-        } finally {
-            setLoading(false);
+
+        const response = await login(values.email, values.password);
+
+        if (response.success) {
+            toast(
+                <div>
+                    <p>You have successfully logged in, {response.data.first_name} {response.data.last_name}!</p>
+                </div>
+            );
+            navigate('/');
+        } else {
+            if (response.error?.error) {
+                setErrorMsg(response.error.error);
+            } else if (response.error?.non_field_errors) {
+                setErrorMsg(response.error.non_field_errors.join(' '));
+            } else {
+                setErrorMsg("An unknown error occurred. Please try again later.");
+            }
         }
+
+        setLoading(false);
     }
 
     return (
@@ -94,22 +109,26 @@ export function LoginForm() {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit">Submit</Button>
+                    
+                    {errorMsg && (
+                        <Alert variant="destructive">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>Error</AlertTitle>
+                            <AlertDescription>
+                                {errorMsg}
+                            </AlertDescription>
+                        </Alert>
+                    )}
+                    {loading ? (
+                        <Button disabled>
+                            <Loader2 className="animate-spin" />
+                            Loading...
+                        </Button>
+                    ) : (
+                        <Button type="submit">Submit</Button>
+                    )}
                 </form>
             </Form>
         </div>
     )
 }
-
-
-
-//   function onSubmit(data: z.infer<typeof FormSchema>) {
-//     toast({
-//       title: "You submitted the following values:",
-//       description: (
-//         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-//           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-//         </pre>
-//       ),
-//     })
-//   }

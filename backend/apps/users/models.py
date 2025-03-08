@@ -8,6 +8,13 @@ class CustomUser(AbstractUser):
     )
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='client')
     email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    number = models.CharField(max_length=20)
+    address = models.CharField(max_length=255)
+    postcode = models.CharField(max_length=20)
+    dob = models.DateField(default='2000-01-01')
+    password = models.CharField(max_length=128)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -17,31 +24,15 @@ class CustomUser(AbstractUser):
 
 class Client(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    number = models.CharField(max_length=20)
-    email = models.EmailField()
-    address = models.CharField(max_length=255)
-    postcode = models.CharField(max_length=20)
     company_name = models.CharField(max_length=255, blank=True, null=True)
-    dob = models.DateField()
-    password = models.CharField(max_length=128)
 
 class Supplier(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    number = models.CharField(max_length=20)
-    email = models.EmailField()
-    address = models.CharField(max_length=255)
-    postcode = models.CharField(max_length=20)
     company_name = models.CharField(max_length=255)
     company_number = models.CharField(max_length=20)
-    dob = models.DateField()
     company_address = models.CharField(max_length=255)
     company_postcode = models.CharField(max_length=20)
     company_type = models.CharField(max_length=255)
     company_description = models.CharField(max_length=250)
     company_logo = models.ImageField(upload_to='logos/')
     subcategories = models.CharField(max_length=255)
-    password = models.CharField(max_length=128)
