@@ -24,6 +24,9 @@ import {
     - Distribution
         - 3PL
         - Delivery
+    - News
+    - About
+    - Contact
 */
 
 function NavItemsCentre() {
@@ -110,6 +113,30 @@ function NavItemsCentre() {
                                 </li>
                             </ul>
                         </NavigationMenuContent>
+                    </NavigationMenuItem>
+                </NavigationMenuList>
+            </NavigationMenu>
+
+            <NavigationMenu>
+                <NavigationMenuList>
+                    <NavigationMenuItem>
+                        <NavigationMenuLink href="/news/" className={navigationMenuTriggerStyle()}>News</NavigationMenuLink>
+                    </NavigationMenuItem>
+                </NavigationMenuList>
+            </NavigationMenu>
+
+            <NavigationMenu>
+                <NavigationMenuList>
+                    <NavigationMenuItem>
+                        <NavigationMenuLink href="/about/" className={navigationMenuTriggerStyle()}>About</NavigationMenuLink>
+                    </NavigationMenuItem>
+                </NavigationMenuList>
+            </NavigationMenu>
+
+            <NavigationMenu>
+                <NavigationMenuList>
+                    <NavigationMenuItem>
+                        <NavigationMenuLink href="/contact/" className={navigationMenuTriggerStyle()}>Contact</NavigationMenuLink>
                     </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>

@@ -31,7 +31,17 @@ function NavItemsBurger() {
                         Find what you need today!
                     </SheetDescription>
                 </SheetHeader>
-                <div className="space-y-6 mt-4 p-4">
+                <div className="overflow-auto space-y-6 p-4">
+                    {/* Auth Section */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <SheetClose asChild>
+                            <Button variant="outline" onClick={() => navigate('/register/')}>Register</Button>
+                        </SheetClose>
+                        <SheetClose asChild>
+                            <Button variant="outline" onClick={() => navigate('/login/')}>Login</Button>
+                        </SheetClose>
+                    </div>
+
                     {/* Tenders Section */}
                     <div>
                         <SheetClose asChild>
@@ -99,11 +109,30 @@ function NavItemsBurger() {
                             </SheetClose>
                         </div>
                     </div>
+
+                    {/* News Section */}
+                    <div>
+                        <SheetClose asChild>
+                            <Button variant="outline" onClick={() => navigate('/news/')}>News</Button>
+                        </SheetClose>
+
+                        {/* About Section */}
+                        <SheetClose asChild>
+                            <Button variant="outline" onClick={() => navigate('/about/')}>About</Button>
+                        </SheetClose>
+
+                        {/* Contact Section */}
+                        <SheetClose asChild>
+                            <Button variant="outline" onClick={() => navigate('/contact/')}>Contact</Button>
+                        </SheetClose>
+                    </div>
                 </div>
-                {/* Optionally, include a close button */}
-                <SheetClose asChild>
+
+                {/* TODO */}
+                {/* close button */}
+                {/* <SheetClose asChild>
                     <Button variant="secondary" className="mt-6">Close</Button>
-                </SheetClose>
+                </SheetClose> */}
             </SheetContent>
         </Sheet>
     );
