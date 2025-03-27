@@ -106,22 +106,25 @@ export function LoginForm() {
                             </FormItem>
                         )}
                     />
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }: { field: any }) => (
-                            <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                    <Input {...field} type="password" />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter the password you used to sign up.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    <div>
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }: { field: any }) => (
+                                <FormItem>
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} type="password" />
+                                    </FormControl>
+                                    <FormDescription>
+                                        Enter the password you used to sign up.
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button variant="link" className='p-0' onClick={() => navigate('/forgot-password')}>I forgot my password</Button>
+                    </div>
 
                     {errorMsg && (
                         <Alert variant="destructive">
