@@ -1,5 +1,5 @@
 from rest_framework import generics
-from .models import Client, Supplier
+from .models import Client, Supplier, CustomUser
 from .serializers import ClientSerializer, SupplierSerializer, CustomUserSerializer, ChangePasswordSerializer
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -85,3 +85,15 @@ class UpdateUserView(APIView):
                 supplier_serializer.save()
             return Response(user_serializer.data, status=status.HTTP_200_OK)
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class CheckIfClientView(View):
+    permission_classes = [AllowAny]
+    
+    def get(self, request, email):
+        try:
+            user = CustomUser.objects.get(email=email)
+            if user.user_type == 'client':
+                return JsonResponse({'is_client': True, 'user_exists': True})
+            return JsonResponse({'is_client': False, 'user_exists': True})
+        except CustomUser.DoesNotExist:
+            return JsonResponse({'is_client': False, 'user_exists': False})

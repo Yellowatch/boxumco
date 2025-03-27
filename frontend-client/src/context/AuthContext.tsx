@@ -13,6 +13,7 @@ interface AuthContextType {
     deleteUser: () => Promise<{ success: boolean; error?: any }>;
     changePassword: (current_password: string, new_password: string) => Promise<{ success: boolean; error?: any }>;
     updateUser: (userData: any) => Promise<{ success: boolean; data?: any; error?: any }>;
+    checkIfClient: (email: string) => Promise<{ success: boolean; data?: any; error?: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -37,6 +38,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             localStorage.setItem('access_token', access);
             localStorage.setItem('refresh_token', refresh);
             localStorage.setItem('user_type', user_type);
+            return { success: true, data: response.data };
+        } catch (error: any) {
+            return { success: false, error: error.response?.data };
+        }
+    };
+
+    const checkIfClient = async (email: string) => {
+        try {
+            const response = await axiosInstance.get(`/api/users/check-if-client/${email}/`);
             return { success: true, data: response.data };
         } catch (error: any) {
             return { success: false, error: error.response?.data };
@@ -157,7 +167,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, access_token, refresh_token, login, logout, register, registerBusiness, fetchUserDetails, deleteUser, changePassword, updateUser }}>
+        <AuthContext.Provider value={{ user, access_token, refresh_token, login, logout, register, registerBusiness, fetchUserDetails, deleteUser, changePassword, updateUser, checkIfClient }}>
             {children}
         </AuthContext.Provider>
     );

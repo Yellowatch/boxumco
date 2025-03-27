@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ClientCreateView, SupplierCreateView, UserDetailsView, DeleteAccountView, ChangePasswordView, UpdateUserView
+from .views import ClientCreateView, SupplierCreateView, UserDetailsView, DeleteAccountView, ChangePasswordView, UpdateUserView, CheckIfClientView
 from .views import MyTokenObtainPairView, MyTokenRefreshView
 
 urlpatterns = [
@@ -11,4 +11,5 @@ urlpatterns = [
     path('user/delete/', DeleteAccountView.as_view(), name='delete'),
     path('user/change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('user/update/', UpdateUserView.as_view(), name='update-user'),
+    path('check-if-client/<str:email>/', CheckIfClientView.as_view(), name='check-if-client'),
 ]

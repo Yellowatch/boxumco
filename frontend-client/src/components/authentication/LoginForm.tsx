@@ -37,7 +37,7 @@ const formSchema = z.object({
 export function LoginForm() {
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
-    const { login } = useAuth();
+    const { login, checkIfClient } = useAuth();
     const navigate = useNavigate();
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -52,23 +52,35 @@ export function LoginForm() {
         setLoading(true);
         setErrorMsg('');
 
-        const response = await login(values.email, values.password);
+        // check if it is a client, if yes continue
+        const isClient = await checkIfClient(values.email);
 
-        if (response.success) {
-            toast(
-                <div>
-                    <p>You have successfully logged in, {response.data.first_name} {response.data.last_name}!</p>
-                </div>
-            );
-            navigate('/');
-        } else {
-            if (response.error?.error) {
-                setErrorMsg(response.error.error);
-            } else if (response.error?.non_field_errors) {
-                setErrorMsg(response.error.non_field_errors.join(' '));
+        // if it is a client, login
+        if (isClient.success == true && isClient.data.is_client === true) {
+            const response = await login(values.email, values.password);
+            if (response.success) {
+                toast(
+                    <div>
+                        <p>You have successfully logged in, {response.data.first_name} {response.data.last_name}!</p>
+                    </div>
+                );
+                navigate('/');
             } else {
-                setErrorMsg("An unknown error occurred. Please try again later.");
+                if (response.error?.error) {
+                    setErrorMsg(response.error.error);
+                } else if (response.error?.non_field_errors) {
+                    setErrorMsg(response.error.non_field_errors.join(' '));
+                } else {
+                    setErrorMsg("An unknown error occurred. Please try again later.");
+                }
             }
+        } else if (isClient.success == true && isClient.data.is_client === false) { // if it is a supplier, show error
+            setErrorMsg("Please log in using the supplier login page.");
+        } else if (isClient.success == false) {
+            console.log("there was an error", isClient.error);
+            setErrorMsg(isClient.error);
+        } else {
+            setErrorMsg("An unknown error occurred. Please try again later.");
         }
 
         setLoading(false);
@@ -110,7 +122,7 @@ export function LoginForm() {
                             </FormItem>
                         )}
                     />
-                    
+
                     {errorMsg && (
                         <Alert variant="destructive">
                             <AlertCircle className="h-4 w-4" />
