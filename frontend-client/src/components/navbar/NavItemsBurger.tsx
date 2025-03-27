@@ -19,11 +19,11 @@ function NavItemsBurger() {
 
     return (
         <Sheet>
-            <SheetTrigger>
-                <Button variant="outline" size="icon">
+            <Button variant="outline" size="icon" asChild>
+                <SheetTrigger>
                     <Menu />
-                </Button>
-            </SheetTrigger>
+                </SheetTrigger>
+            </Button>
             <SheetContent>
                 <SheetHeader>
                     <SheetTitle>Navbar</SheetTitle>

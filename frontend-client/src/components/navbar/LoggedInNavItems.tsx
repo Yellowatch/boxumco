@@ -21,7 +21,7 @@ interface LoggedInNavItemsProps {
     onClickLogout: () => void;
 }
 
-export function LoggedInNavItems({ onClickLogout }: LoggedInNavItemsProps) {
+export default function LoggedInNavItems({ onClickLogout }: LoggedInNavItemsProps) {
     const navigate = useNavigate();
 
     return (
@@ -39,7 +39,7 @@ export function LoggedInNavItems({ onClickLogout }: LoggedInNavItemsProps) {
                         </DropdownMenuItem>
                         <DialogTrigger asChild>
                             {/* copying the styling of DropdownMenuItem */}
-                            <div className="cursor-pointer flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-neutral-50">
+                            <div className="cursor-pointer flex items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-primary-dark dark:hover:text-primary">
                                 Logout
                             </div>
                         </DialogTrigger>
@@ -51,15 +51,17 @@ export function LoggedInNavItems({ onClickLogout }: LoggedInNavItemsProps) {
                         <DialogDescription>
                             This will log you out of the application.
                         </DialogDescription>
-                        <div className="flex gap-2 mt-4">
+                        <div className="flex justify-between mt-4">
                             <DialogClose asChild>
                                 <Button variant="secondary" size="sm">
                                     Cancel
                                 </Button>
                             </DialogClose>
-                            <Button variant="destructive" size="sm" onClick={onClickLogout}>
-                                Logout
-                            </Button>
+                            <DialogClose asChild>
+                                <Button variant="destructive" size="sm" onClick={onClickLogout}>
+                                    Logout
+                                </Button>
+                            </DialogClose>
                         </div>
                     </DialogHeader>
                 </DialogContent>

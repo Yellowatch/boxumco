@@ -1,4 +1,3 @@
-"use client"
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -14,9 +13,10 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "./ui/form"
+} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { PhoneInput } from "@/components/ui/phone-input";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
 import { AlertCircle } from "lucide-react"
@@ -45,7 +45,7 @@ const formSchema = z.object({
     postcode: z.string().min(3, {
         message: "Please enter a valid postcode.",
     }),
-    company_name: z.string().optional(),
+    company_name: z.string(),
     dob: z.string().min(10, {
         message: "Please enter a valid date of birth.",
     }),
@@ -55,12 +55,40 @@ const formSchema = z.object({
     confirm_password: z.string().min(8, {
         message: "Confirm password must be at least 8 characters.",
     }),
+    company_number: z.string().min(10, {
+        message: "Please enter a valid phone number.",
+    }),
+    company_address: z.string().min(5, {
+        message: "Please enter a valid address.",
+    }),
+    company_postcode: z.string().min(3, {
+        message: "Please enter a valid postcode.",
+    }),
+    company_type: z.string().min(2, {
+        message: "Please enter a valid company type.",
+    }),
+
+    company_description: z
+        .string()
+        .min(10, {
+            message: "Description must be at least 10 characters.",
+        })
+        .max(250, {
+            message: "Description must not be longer than 160 characters.",
+        }),
+
+    company_logo: z.string().min(5, {
+        message: "Please enter a valid company logo.",
+    }),
+    subcategories: z.string().min(5, {
+        message: "Please enter a valid subcategories.",
+    }),
 }).refine((data) => data.password === data.confirm_password, {
     message: "Passwords do not match",
     path: ["confirm_password"], // path of error
 });
 
-export function RegisterForm() {
+const BusinessRegisterForm = () => {
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
     const { register } = useAuth();
@@ -79,6 +107,13 @@ export function RegisterForm() {
             dob: "",
             password: "",
             confirm_password: "",
+            company_number: "",
+            company_address: "",
+            company_postcode: "",
+            company_type: "",
+            company_description: "",
+            company_logo: "",
+            subcategories: "",
         },
     })
 
@@ -93,9 +128,16 @@ export function RegisterForm() {
             values.number,
             values.address,
             values.postcode,
-            values.company_name ?? '',
+            values.company_name ?? '', // Optional field
             values.dob,
-            values.password
+            values.password,
+            // values.company_number,
+            // values.company_address,
+            // values.company_postcode,
+            // values.company_type,
+            // values.company_description,
+            // values.company_logo,
+            // values.subcategories
         );
 
         if (response.success) {
@@ -122,7 +164,7 @@ export function RegisterForm() {
     return (
         <div className="flex justify-center items-center">
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <FormField
                         control={form.control}
                         name="first_name"
@@ -150,6 +192,22 @@ export function RegisterForm() {
                                 </FormControl>
                                 <FormDescription>
                                     Enter only your last name.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="dob"
+                        render={({ field }: { field: any }) => (
+                            <FormItem>
+                                <FormLabel>Date of Birth</FormLabel>
+                                <FormControl>
+                                    <Input {...field} type='date' />
+                                </FormControl>
+                                <FormDescription>
+                                    Enter your date of birth.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -225,7 +283,7 @@ export function RegisterForm() {
                         render={({ field }: { field: any }) => (
                             <FormItem>
                                 <FormLabel>
-                                    Company Name <span className='font-extralight'>(optional)</span>
+                                    Company Name
                                 </FormLabel>
                                 <FormControl>
                                     <Input {...field} />
@@ -239,15 +297,114 @@ export function RegisterForm() {
                     />
                     <FormField
                         control={form.control}
-                        name="dob"
+                        name="company_number"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col items-start">
+                                <FormLabel className="text-left">Company Phone Number</FormLabel>
+                                <FormControl className="w-full">
+                                    <PhoneInput defaultCountry="AU" placeholder="Enter a phone number" {...field} />
+                                </FormControl>
+                                <FormDescription className="text-left">
+                                    Enter the company phone number
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="company_address"
                         render={({ field }: { field: any }) => (
                             <FormItem>
-                                <FormLabel>Date of Birth</FormLabel>
+                                <FormLabel>Company Address</FormLabel>
                                 <FormControl>
-                                    <Input {...field} type='date' />
+                                    <Input {...field} />
                                 </FormControl>
                                 <FormDescription>
-                                    Enter your date of birth.
+                                    Enter your company address.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="company_postcode"
+                        render={({ field }: { field: any }) => (
+                            <FormItem>
+                                <FormLabel>Company Postcode</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormDescription>
+                                    Enter the company postcode.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="company_type"
+                        render={({ field }: { field: any }) => (
+                            <FormItem>
+                                <FormLabel>Company Type</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormDescription>
+                                    What type of company are you?
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="company_description"
+                        render={({ field }: { field: any }) => (
+                            <FormItem>
+                                <FormLabel>Company Description</FormLabel>
+                                <FormControl>
+                                    <Textarea
+                                        placeholder="Tell us a little bit about your business"
+                                        {...field}
+                                    />
+                                </FormControl>
+                                <FormDescription>
+                                    Describe your business to customers in less than 250 characters.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="company_logo"
+                        render={({ field }: { field: any }) => (
+                            <FormItem>
+                                <FormLabel>Logo</FormLabel>
+                                <FormControl>
+                                    <Input id="picture" type="file" {...field} />
+                                </FormControl>
+                                <FormDescription>
+                                    Upload your company logo.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="subcategories"
+                        render={({ field }: { field: any }) => (
+                            <FormItem>
+                                <FormLabel>Subcategories</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormDescription>
+                                    Add subcategories for your business so users can find you easier.
                                 </FormDescription>
                                 <FormMessage />
                             </FormItem>
@@ -309,4 +466,4 @@ export function RegisterForm() {
     )
 }
 
-export default RegisterForm
+export default BusinessRegisterForm;

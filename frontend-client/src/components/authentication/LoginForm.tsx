@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -13,9 +13,10 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "./ui/form"
+} from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
+import Card from "@/components/Card"
 import { Loader2 } from "lucide-react"
 import { AlertCircle } from "lucide-react"
 import {
@@ -74,9 +75,9 @@ export function LoginForm() {
     }
 
     return (
-        <div className="flex justify-center items-center h-screen">
+        <Card>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                     <FormField
                         control={form.control}
                         name="email"
@@ -129,6 +130,8 @@ export function LoginForm() {
                     )}
                 </form>
             </Form>
-        </div>
+        </Card>
     )
 }
+
+export default LoginForm;

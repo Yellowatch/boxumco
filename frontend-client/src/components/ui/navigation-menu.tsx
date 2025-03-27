@@ -59,7 +59,7 @@ function NavigationMenuItem({
 }
 
 const navigationMenuTriggerStyle = cva(
-  "group inline-flex h-9 w-max items-center justify-center rounded-md bg-white cursor-pointer px-4 py-2 text-sm font-medium hover:bg-neutral-100 hover:text-neutral-900 focus:bg-neutral-100 focus:text-neutral-900 disabled:pointer-events-none disabled:opacity-50 data-[active=true]:bg-neutral-100/50 data-[state=open]:bg-neutral-100/50 data-[active=true]:text-neutral-900 ring-neutral-950/10 dark:ring-neutral-950/20 dark:outline-ring/40 outline-ring/50 transition-[color,box-shadow] focus-visible:ring-4 focus-visible:outline-1 dark:bg-neutral-950 dark:text-neutral-50 dark:hover:bg-neutral-800 dark:hover:text-neutral-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50 dark:data-[active=true]:bg-neutral-800/50 dark:data-[state=open]:bg-neutral-800/50 dark:data-[active=true]:text-neutral-50 dark:ring-neutral-300/10 dark:dark:ring-neutral-300/20"
+  "group inline-flex h-9 w-max items-center justify-center rounded-md bg-white cursor-pointer px-4 py-2 text-sm font-medium hover:bg-neutral-100 hover:text-neutral-900 focus:bg-neutral-100 focus:text-neutral-900 disabled:pointer-events-none disabled:opacity-50 data-[active=true]:bg-neutral-100/50 data-[state=open]:bg-neutral-100/50 data-[active=true]:text-neutral-900 ring-neutral-950/10 dark:ring-neutral-950/20 dark:outline-ring/40 outline-ring/50 transition-[color,box-shadow] focus-visible:ring-4 focus-visible:outline-1 dark:bg-neutral-950 dark:text-primary dark:hover:bg-primary-dark dark:hover:text-primary dark:focus:bg-primary-dark dark:focus:text-primary dark:data-[active=true]:bg-primary-dark/50 dark:data-[state=open]:bg-primary-dark/50 dark:data-[active=true]:text-primary dark:ring-neutral-300/10 dark:dark:ring-neutral-300/20"
 )
 
 function NavigationMenuTrigger({
@@ -112,7 +112,7 @@ function NavigationMenuViewport({
       <NavigationMenuPrimitive.Viewport
         data-slot="navigation-menu-viewport"
         className={cn(
-          "origin-top-center bg-white text-neutral-950 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border border-neutral-200 shadow md:w-[var(--radix-navigation-menu-viewport-width)] dark:bg-neutral-950 dark:text-neutral-50 dark:border-neutral-800",
+          "origin-top-center bg-white text-neutral-950 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border border-neutral-200 shadow md:w-[var(--radix-navigation-menu-viewport-width)] dark:bg-neutral-950 dark:text-primary dark:border-primary-dark",
           className
         )}
         {...props}
@@ -129,7 +129,7 @@ function NavigationMenuLink({
     <NavigationMenuPrimitive.Link
       data-slot="navigation-menu-link"
       className={cn(
-        "hover:bg-neutral-100 hover:text-neutral-900 focus:bg-neutral-100 focus:text-neutral-900 data-[active=true]:bg-neutral-100/50 data-[active=true]:text-neutral-900 ring-neutral-950/10 dark:ring-neutral-950/20 dark:outline-ring/40 outline-ring/50 [&_svg:not([class*='text-'])]:text-neutral-500 flex flex-col gap-1 rounded-sm p-2 text-sm transition-[color,box-shadow] focus-visible:ring-4 focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4 dark:hover:bg-neutral-800 dark:hover:text-neutral-50 dark:focus:bg-neutral-800 dark:focus:text-neutral-50 dark:data-[active=true]:bg-neutral-800/50 dark:data-[active=true]:text-neutral-50 dark:ring-neutral-300/10 dark:dark:ring-neutral-300/20 dark:[&_svg:not([class*='text-'])]:text-neutral-400",
+        "hover:bg-neutral-100 hover:text-neutral-900 focus:bg-neutral-100 focus:text-neutral-900 data-[active=true]:bg-neutral-100/50 data-[active=true]:text-neutral-900 ring-neutral-950/10 dark:ring-neutral-950/20 dark:outline-ring/40 outline-ring/50 [&_svg:not([class*='text-'])]:text-neutral-500 flex flex-col gap-1 rounded-sm p-2 text-sm transition-[color,box-shadow] focus-visible:ring-4 focus-visible:outline-1 [&_svg:not([class*='size-'])]:size-4 dark:hover:bg-primary-dark dark:hover:text-primary dark:focus:bg-primary-dark dark:focus:text-primary dark:data-[active=true]:bg-primary-dark/50 dark:data-[active=true]:text-primary dark:ring-neutral-300/10 dark:dark:ring-neutral-300/20 dark:[&_svg:not([class*='text-'])]:text-neutral-400",
         className
       )}
       {...props}
@@ -150,7 +150,7 @@ function NavigationMenuIndicator({
       )}
       {...props}
     >
-      <div className="bg-neutral-200 relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm shadow-md dark:bg-neutral-800" />
+      <div className="bg-neutral-200 relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm shadow-md dark:bg-primary-dark" />
     </NavigationMenuPrimitive.Indicator>
   )
 }

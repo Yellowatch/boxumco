@@ -25,9 +25,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             "access": str(refresh.access_token),
         }
 
-        print(user.first_name)
-
-        data.update({"user_id": user.id, "email": user.email, "user_type": user.user_type, "first_name": user.first_name, "last_name": user.last_name})
+        data.update({"user_id": user.id, "user_type": user.user_type, "first_name": user.first_name, "last_name": user.last_name})
 
         return data
 
@@ -141,3 +139,8 @@ class SupplierSerializer(serializers.ModelSerializer):
             return supplier
         except IntegrityError:
             raise serializers.ValidationError("A user with that email already exists.")
+        
+
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
