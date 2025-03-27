@@ -77,11 +77,11 @@ const formSchema = z.object({
             message: "Description must not be longer than 160 characters.",
         }),
 
-    company_logo: z.string().min(5, {
-        message: "Please enter a valid company logo.",
+    company_logo: z.instanceof(File, {
+        message: "Please upload a valid file.",
     }),
     subcategories: z.string().min(5, {
-        message: "Please enter a valid subcategories.",
+        message: "Please enter a valid subcategory.",
     }),
 }).refine((data) => data.password === data.confirm_password, {
     message: "Passwords do not match",
@@ -91,7 +91,7 @@ const formSchema = z.object({
 const BusinessRegisterForm = () => {
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
-    const { register } = useAuth();
+    const { registerBusiness } = useAuth();
     const navigate = useNavigate();
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -112,7 +112,7 @@ const BusinessRegisterForm = () => {
             company_postcode: "",
             company_type: "",
             company_description: "",
-            company_logo: "",
+            company_logo: new File([], ""),
             subcategories: "",
         },
     })
@@ -121,23 +121,23 @@ const BusinessRegisterForm = () => {
         setLoading(true);
         setErrorMsg('');
 
-        const response = await register(
+        const response = await registerBusiness(
             values.first_name,
             values.last_name,
             values.email,
             values.number,
             values.address,
             values.postcode,
-            values.company_name ?? '', // Optional field
+            values.company_name,
             values.dob,
+            values.company_address,
+            values.company_description,
+            values.company_postcode,
+            values.company_number,
+            values.company_type,
+            values.company_logo,
+            values.subcategories,
             values.password,
-            // values.company_number,
-            // values.company_address,
-            // values.company_postcode,
-            // values.company_type,
-            // values.company_description,
-            // values.company_logo,
-            // values.subcategories
         );
 
         if (response.success) {
@@ -149,7 +149,12 @@ const BusinessRegisterForm = () => {
             navigate('/login');
             window.scrollTo(0, 0); // Scroll to the top of the page
         } else {
-            if (response.error?.email) {
+            console.log(response.error);
+            if (response.error) {
+                setErrorMsg(response.error);
+            } else if (response.error?.non_field_errors) {
+                setErrorMsg(response.error.non_field_errors.join(' '));
+            } else if (response.error?.email) {
                 setErrorMsg(response.error.email);
             } else if (response.error?.message) {
                 setErrorMsg(response.error.message);
@@ -385,7 +390,13 @@ const BusinessRegisterForm = () => {
                             <FormItem>
                                 <FormLabel>Logo</FormLabel>
                                 <FormControl>
-                                    <Input id="picture" type="file" {...field} />
+                                    <Input
+                                        accept=".jpg, .jpeg, .png, .svg, .ico"
+                                        type="file"
+                                        onChange={(e) =>
+                                            field.onChange(e.target.files ? e.target.files[0] : null)
+                                        }
+                                    />
                                 </FormControl>
                                 <FormDescription>
                                     Upload your company logo.
@@ -399,7 +410,7 @@ const BusinessRegisterForm = () => {
                         name="subcategories"
                         render={({ field }: { field: any }) => (
                             <FormItem>
-                                <FormLabel>Subcategories</FormLabel>
+                                <FormLabel>Company Subcategories</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
                                 </FormControl>

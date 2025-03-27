@@ -8,6 +8,7 @@ interface AuthContextType {
     login: (email: string, password: string) => Promise<{ success: boolean; data?: any; error?: any }>;
     logout: () => void;
     register: (first_name: string, last_name: string, email: string, number: string, address: string, postcode: string, company_name: string, dob: string, password: string) => Promise<{ success: boolean; data?: any; error?: any }>;
+    registerBusiness: (first_name: string, last_name: string, email: string, number: string, address: string, postcode: string, dob: string, company_name: string, company_address: string, company_description: string, company_postcode: string, company_number: string, company_type: string, company_logo: File, subcategories: string, password: string) => Promise<{ success: boolean; data?: any; error?: any }>;
     fetchUserDetails: () => Promise<any>;
     deleteUser: () => Promise<{ success: boolean; error?: any }>;
     changePassword: (current_password: string, new_password: string) => Promise<{ success: boolean; error?: any }>;
@@ -54,6 +55,55 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const register = async (first_name: string, last_name: string, email: string, number: string, address: string, postcode: string, company_name: string, dob: string, password: string) => {
         try {
             const response = await axiosInstance.post('/api/users/clients/', { first_name, last_name, email, number, address, postcode, company_name, dob, password });
+            return { success: true, data: response.data };
+        } catch (error: any) {
+            return { success: false, error: error.response?.data };
+        }
+    };
+
+    const registerBusiness = async (
+        first_name: string,
+        last_name: string,
+        email: string,
+        number: string,
+        address: string,
+        postcode: string,
+        company_name: string,
+        dob: string,
+        company_address: string,
+        company_description: string,
+        company_postcode: string,
+        company_number: string,
+        company_type: string,
+        company_logo: File,
+        subcategories: string,
+        password: string
+    ) => {
+        try {
+            const formData = new FormData();
+            formData.append('first_name', first_name);
+            formData.append('last_name', last_name);
+            formData.append('email', email);
+            formData.append('number', number);
+            formData.append('address', address);
+            formData.append('postcode', postcode);
+            formData.append('company_name', company_name);
+            formData.append('dob', dob);
+            formData.append('company_address', company_address);
+            formData.append('company_description', company_description);
+            formData.append('company_postcode', company_postcode);
+            formData.append('company_number', company_number);
+            formData.append('company_type', company_type);
+            formData.append('company_logo', company_logo);
+            formData.append('subcategories', subcategories);
+            formData.append('password', password);
+    
+            const response = await axiosInstance.post('/api/users/suppliers/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+    
             return { success: true, data: response.data };
         } catch (error: any) {
             return { success: false, error: error.response?.data };
@@ -107,7 +157,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, access_token, refresh_token, login, logout, register, fetchUserDetails, deleteUser, changePassword, updateUser }}>
+        <AuthContext.Provider value={{ user, access_token, refresh_token, login, logout, register, registerBusiness, fetchUserDetails, deleteUser, changePassword, updateUser }}>
             {children}
         </AuthContext.Provider>
     );
