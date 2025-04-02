@@ -35,15 +35,15 @@ axiosInstance.interceptors.response.use(
           return Promise.reject(error);
         }
         // Request a new access token using the refresh token
-        console.log('Refreshing token...');
-        const refreshResponse = await axios.post('/api/users/token/refresh/', { token: refreshToken });
-        const { accessToken: newAccessToken } = refreshResponse.data as { accessToken: string };
+        const refreshResponse = await axiosInstance.post('/api/users/token/refresh/', { refresh: refreshToken });
+        const { access: newAccessToken } = refreshResponse.data as { access: string };
         // Store the new access token
         localStorage.setItem('access_token', newAccessToken);
         // Update the Authorization header and retry the original request
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
+        console.error('Token refresh failed:', refreshError);
         // If the refresh fails, clear tokens and reject
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');

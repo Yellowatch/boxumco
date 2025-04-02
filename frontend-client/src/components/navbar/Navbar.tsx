@@ -1,45 +1,30 @@
 // React
 import { useNavigate } from "react-router-dom"
-import { useEffect, useState } from "react";
 
 // UI Library Components
 import {
     NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuIndicator,
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-    NavigationMenuTrigger,
-    NavigationMenuViewport,
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { ModeToggle } from "@/components/mode-toggle"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner";
 
 // My components
 import NavItemsBurger from "./NavItemsBurger";
 import NavItemsCentre from "./NavItemsCentre";
-import { LoggedInNavItems } from "./LoggedInNavItems";
-import { ModeButton } from "./ModeButton";
+import LoggedInNavItems from "./LoggedInNavItems";
+import ModeButton from "@/components/theme/ModeButton";
 
 // Context
 import { useAuth } from "@/context/AuthContext"
 
 
-
 function Navbar() {
-    const { user, logout } = useAuth();
-    const [userEmail, setUserEmail] = useState('');
+    const { user, refresh_token, logout } = useAuth();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const storedUserEmail = localStorage.getItem('user_email');
-        if (storedUserEmail) {
-            setUserEmail(storedUserEmail);
-        }
-    }, [user]);
 
     const onClickLogout = () => {
         toast(
@@ -47,7 +32,6 @@ function Navbar() {
                 <p>You have successfully logged out!</p>
             </div>
         );
-        setUserEmail('');
         logout();
     };
 
@@ -68,7 +52,7 @@ function Navbar() {
                 <div className="flex items-center space-x-4">
                     <NavigationMenu>
                         <NavigationMenuList>
-                            {userEmail || user ? (
+                            {(user && user.refresh_token) || refresh_token ? (
                                 <>
                                     <NavigationMenuItem>
                                         <LoggedInNavItems onClickLogout={onClickLogout} />

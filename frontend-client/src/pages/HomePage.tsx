@@ -1,30 +1,19 @@
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
 import { toast } from "sonner"
 
 const HomePage = () => {
+    const { fetchUserDetails } = useAuth();
 
-    const onClickButton = () => {
-        console.log('Button clicked');
-        toast(
-            <div>
-                <p>You have successfully registered!</p>
-            </div>
-        );
+    const onClickButton = async () => {
+        const data = await fetchUserDetails();
+        console.log("data", data);
     };
 
     return (
         <>
-            <div className='container bg-neutral-50 dark:bg-neutral-800 h-screen'>
-                <Button onClick={onClickButton}>Toast</Button>
-                <div className='md:hidden'>
-                    <h1>sm</h1>
-                </div>
-                <div className='hidden md:block lg:hidden'>
-                    <h1>md</h1>
-                </div>
-                <div className='hidden lg:block'>
-                    <h1>lg</h1>
-                </div>
+            <div className='container bg-primary dark:bg-primary-dark h-screen'>
+                <Button onClick={onClickButton}>Get user details</Button>
             </div>
         </>
     );

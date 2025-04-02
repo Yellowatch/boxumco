@@ -9,18 +9,35 @@
 }
 
 @theme inline {
-
   --radius-sm: calc(var(--radius) - 4px);
-
   --radius-md: calc(var(--radius) - 2px);
-
   --radius-lg: var(--radius);
-
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* This could be background colour */
+  --color-primary: oklch(0.985 0 0);
+  --color-primary-dark: oklch(0.269 0 0);
+  /* This could be like text colour */
+  --color-secondary: #2c5282; 
+  /* this is the special colour that stands out */
+  --color-accent: #2d3748;
 }
 
 @utility container {
-  padding: 20px;
   max-width: 1200px;
   margin: auto;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+@layer components {
+  .card{
+    @apply bg-white shadow-md rounded-lg p-6 max-w-xl;
+  }
+}
+
+@layer base {
+  h1 {
+    @apply text-4xl font-bold;
+  }
 }
