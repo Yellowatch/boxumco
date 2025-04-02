@@ -24,6 +24,7 @@ import {
     AlertDescription,
     AlertTitle,
 } from "@/components/ui/alert"
+import MfaForm from './MFAForm';
 
 const formSchema = z.object({
     email: z.string().email({
@@ -37,7 +38,8 @@ const formSchema = z.object({
 export function LoginForm() {
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
-    const { login, checkIfClient } = useAuth();
+    const { login, checkIfClient, fetchUserDetails } = useAuth();
+    const [tempToken, setTempToken] = useState<string | null>(null);
     const navigate = useNavigate();
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -56,15 +58,33 @@ export function LoginForm() {
         const isClient = await checkIfClient(values.email);
 
         // if it is a client, login
-        if (isClient.success == true && isClient.data.is_client === true) {
+        if (isClient.success === true && isClient.data.is_client === true) {
             const response = await login(values.email, values.password);
             if (response.success) {
-                toast(
-                    <div>
-                        <p>You have successfully logged in, {response.data.first_name} {response.data.last_name}!</p>
-                    </div>
-                );
-                navigate('/');
+                // If MFA is required, store the temporary token and let the MFA form handle the rest.
+                if (response.mfaRequired) {
+                    setTempToken(response.temp_token ?? null);
+                } else {
+                    const userDetails = await fetchUserDetails();
+                    if (userDetails.success) {
+                        toast(
+                            <div>
+                                <p>
+                                    You have successfully logged in, {userDetails.data.first_name} {userDetails.data.last_name}!
+                                </p>
+                            </div>
+                        );
+                    } else {
+                        toast(
+                            <div>
+                                <p>
+                                    You have successfully logged in!
+                                </p>
+                            </div>
+                        );
+                    }
+                    navigate('/');
+                }
             } else {
                 if (response.error?.error) {
                     setErrorMsg(response.error.error);
@@ -74,9 +94,10 @@ export function LoginForm() {
                     setErrorMsg("An unknown error occurred. Please try again later.");
                 }
             }
-        } else if (isClient.success == true && isClient.data.is_client === false) { // if it is a supplier, show error
+        } else if (isClient.success === true && isClient.data.is_client === false) {
+            // if it is a supplier, show error
             setErrorMsg("Please log in using the supplier login page.");
-        } else if (isClient.success == false) {
+        } else if (isClient.success === false) {
             console.log("there was an error", isClient.error);
             setErrorMsg(isClient.error);
         } else {
@@ -85,6 +106,12 @@ export function LoginForm() {
 
         setLoading(false);
     }
+
+
+    if (tempToken) {
+        return <MfaForm tempToken={tempToken} />;
+    }
+
 
     return (
         <Card>

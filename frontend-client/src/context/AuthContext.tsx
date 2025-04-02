@@ -5,7 +5,13 @@ interface AuthContextType {
     user: any;
     access_token: string | null;
     refresh_token: string | null;
-    login: (email: string, password: string) => Promise<{ success: boolean; data?: any; error?: any }>;
+    login: (email: string, password: string) => Promise<{ 
+        success: boolean; 
+        data?: any; 
+        error?: any; 
+        mfaRequired?: boolean;
+        temp_token?: string;
+    }>;
     logout: () => void;
     register: (first_name: string, last_name: string, email: string, number: string, address: string, postcode: string, company_name: string, dob: string, password: string) => Promise<{ success: boolean; data?: any; error?: any }>;
     registerBusiness: (first_name: string, last_name: string, email: string, number: string, address: string, postcode: string, dob: string, company_name: string, company_address: string, company_description: string, company_postcode: string, company_number: string, company_type: string, company_logo: File, subcategories: string, password: string) => Promise<{ success: boolean; data?: any; error?: any }>;
@@ -14,6 +20,9 @@ interface AuthContextType {
     changePassword: (current_password: string, new_password: string) => Promise<{ success: boolean; error?: any }>;
     updateUser: (userData: any) => Promise<{ success: boolean; data?: any; error?: any }>;
     checkIfClient: (email: string) => Promise<{ success: boolean; data?: any; error?: any }>;
+    verifyMfa: (tempToken: string, mfaCode: string) => Promise<{ success: boolean; error?: string }>;
+    initiateMfaSetup: () => Promise<{ success: boolean; qrCode?: string; provisioningUri?: string; error?: string }>;
+    confirmMfaSetup: (mfaCode: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -29,20 +38,54 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const login = async (email: string, password: string) => {
         try {
-            const response = await axiosInstance.post('/api/users/token/', { email, password });
-            const { refresh, access, user_id, user_type } = response.data as { refresh: string, access: string, user_id: any, user_type: string };
-            setAccessToken(access);
-            setRefreshToken(refresh);
-            const user = { user_id, user_type };
-            setUser(user);
-            localStorage.setItem('access_token', access);
-            localStorage.setItem('refresh_token', refresh);
-            localStorage.setItem('user_type', user_type);
-            return { success: true, data: response.data };
+            interface LoginResponse {
+                refresh: string;
+                access: string;
+                user_id: number;
+                user_type: string;
+                temp_token?: string; // Optional property for MFA
+            }
+            const response = await axiosInstance.post<LoginResponse>('/api/users/token/login/', { email, password });
+            // If MFA is required, the backend returns a 202 status with a temporary token
+            if (response.status === 202) {
+                // You can store the temp_token in state or localStorage (if appropriate)
+                // Then navigate to an MFA challenge page or render an MFA form component
+                return { success: true, mfaRequired: true, temp_token: response.data.temp_token };
+            } else {
+                const { refresh, access, user_id, user_type } = response.data as LoginResponse;
+                setAccessToken(access);
+                setRefreshToken(refresh);
+                const user = { user_id, user_type };
+                setUser(user);
+                localStorage.setItem('access_token', access);
+                localStorage.setItem('refresh_token', refresh);
+                localStorage.setItem('user_type', user_type);
+                return { success: true, data: response.data };
+            }
         } catch (error: any) {
             return { success: false, error: error.response?.data };
         }
     };
+
+    const verifyMfa = async (tempToken: string, mfaCode: string) => {
+        try {
+            const response = await axiosInstance.post('/api/users/token/mfa/', {
+                temp_token: tempToken,
+                mfa_code: mfaCode,
+            });
+            const { refresh, access, user_id, user_type } = response.data as { refresh: string; access: string; user_id: number; user_type: string };
+            localStorage.setItem('access_token', access);
+            localStorage.setItem('refresh_token', refresh);
+            localStorage.setItem('user_type', user_type);
+            setAccessToken(access);
+            setRefreshToken(refresh);
+            setUser({ user_id, user_type });
+            return { success: true };
+        } catch (error: any) {
+            return { success: false, error: 'Invalid MFA code or token expired. Please try again.' };
+        }
+    };
+    
 
     const checkIfClient = async (email: string) => {
         try {
@@ -147,6 +190,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     };
 
+    const initiateMfaSetup = async () => {
+        try {
+            const response = await axiosInstance.get('/api/users/mfa/enable/');
+            const { qr_code, provisioning_uri } = response.data as { qr_code: string; provisioning_uri: string };
+            return { success: true, qrCode: qr_code, provisioningUri: provisioning_uri };
+        } catch (error: any) {
+            return { success: false, error: 'Failed to initiate MFA setup. Please try again.' };
+        }
+    };
+
+    const confirmMfaSetup = async (mfaCode: string) => {
+        try {
+            await axiosInstance.post('/api/users/mfa/confirm/', { mfa_code: mfaCode });
+            return { success: true };
+        } catch (error: any) {
+            return { success: false, error: 'Invalid MFA code. Please try again.' };
+        }
+    };
+
     const deleteUser = async () => {
         try {
             await axiosInstance.delete('/api/users/user/delete/');
@@ -167,7 +229,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, access_token, refresh_token, login, logout, register, registerBusiness, fetchUserDetails, deleteUser, changePassword, updateUser, checkIfClient }}>
+        <AuthContext.Provider value={{ user, access_token, refresh_token, login, logout, register, registerBusiness, fetchUserDetails, deleteUser, changePassword, updateUser, checkIfClient, verifyMfa, initiateMfaSetup, confirmMfaSetup }}>
             {children}
         </AuthContext.Provider>
     );

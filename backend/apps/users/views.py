@@ -97,3 +97,135 @@ class CheckIfClientView(View):
             return JsonResponse({'is_client': False, 'user_exists': True})
         except CustomUser.DoesNotExist:
             return JsonResponse({'is_client': False, 'user_exists': False})
+        
+
+# MFA:
+
+from django.core import signing
+from django.contrib.auth import authenticate, get_user_model
+from django_otp.plugins.otp_totp.models import TOTPDevice
+
+# Create a temporary MFA token that expires (e.g., 5 minutes)
+def create_temp_mfa_token(user):
+    return signing.dumps({'user_id': user.id})
+
+# Validate the temporary token and return the user if valid
+def validate_temp_token(temp_token):
+    try:
+        data = signing.loads(temp_token, max_age=300)  # Expires in 300 seconds (5 minutes)
+        User = get_user_model()
+        return User.objects.get(id=data.get('user_id'))
+    except Exception:
+        return None
+
+# Check if the user has an active TOTP device (MFA enabled)
+def user_has_mfa(user):
+    device = TOTPDevice.objects.filter(user=user, confirmed=True).first()
+    return device is not None
+
+# Verify the provided MFA code against the user’s TOTP device
+def verify_mfa_code(user, mfa_code):
+    device = TOTPDevice.objects.filter(user=user, confirmed=True).first()
+    if device and device.verify_token(mfa_code):
+        return True
+    return False
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
+
+class LoginWithMFAView(APIView):
+    permission_classes = []  # AllowAny
+
+    def post(self, request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        user = authenticate(request, email=email, password=password)
+        if user:
+            if user_has_mfa(user):
+                temp_token = create_temp_mfa_token(user)
+                return Response(
+                    {'detail': 'MFA required', 'temp_token': temp_token},
+                    status=status.HTTP_202_ACCEPTED
+                )
+            else:
+                # No MFA enabled: issue tokens immediately
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token)
+                }, status=status.HTTP_200_OK)
+        return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class MFAValidationView(APIView):
+    permission_classes = []  # AllowAny
+
+    def post(self, request):
+        temp_token = request.data.get('temp_token')
+        mfa_code = request.data.get('mfa_code')
+        user = validate_temp_token(temp_token)
+        if user and verify_mfa_code(user, mfa_code):
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token)
+            }, status=status.HTTP_200_OK)
+        return Response({'detail': 'Invalid MFA code or expired token'}, status=status.HTTP_400_BAD_REQUEST)
+
+import base64
+import pyotp
+import qrcode
+import io
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from django_otp.plugins.otp_totp.models import TOTPDevice
+
+class EnableMFAView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        # Check if there's already an unconfirmed TOTP device for this user.
+        totp_device = TOTPDevice.objects.filter(user=user, confirmed=False).first()
+        if not totp_device:
+            totp_device = TOTPDevice.objects.create(user=user, name="default", confirmed=False)
+        
+        # Convert the device's key from hex to Base32.
+        b32_key = base64.b32encode(bytes.fromhex(totp_device.key)).decode('utf-8')
+        totp = pyotp.TOTP(b32_key)
+        provisioning_uri = totp.provisioning_uri(name=user.email, issuer_name="BoxumCo")
+        
+        # Generate a QR code image for the provisioning URI.
+        qr = qrcode.QRCode(version=1, box_size=10, border=5)
+        qr.add_data(provisioning_uri)
+        qr.make(fit=True)
+        img = qr.make_image(fill="black", back_color="white")
+        buffered = io.BytesIO()
+        img.save(buffered, format="PNG")
+        qr_code_b64 = base64.b64encode(buffered.getvalue()).decode()
+        
+        return Response({
+            'provisioning_uri': provisioning_uri,
+            'qr_code': qr_code_b64,
+        }, status=status.HTTP_200_OK)
+
+class ConfirmMFASetupView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        mfa_code = request.data.get('mfa_code')
+        # Retrieve the unconfirmed TOTP device for the user
+        totp_device = TOTPDevice.objects.filter(user=user, confirmed=False).first()
+        if totp_device:
+            # Convert the stored key from hex to Base32
+            b32_key = base64.b32encode(bytes.fromhex(totp_device.key)).decode('utf-8')
+            totp = pyotp.TOTP(b32_key)
+            if totp.verify(mfa_code):
+                totp_device.confirmed = True
+                totp_device.save()
+                return Response({'detail': 'MFA enabled successfully'}, status=status.HTTP_200_OK)
+        return Response({'detail': 'Invalid MFA code or no pending MFA setup'}, status=status.HTTP_400_BAD_REQUEST)

@@ -3,12 +3,12 @@ import { AuthProvider } from '@/context/AuthContext';
 import { ThemeProvider } from "@/components/theme/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 
+import PrivateRoute from './context/PrivateRoute';
 import Navbar from '@/components/navbar/Navbar';
 import ProfilePage from '@/pages/ProfilePage';
 import HomePage from '@/pages/HomePage';
 import RegisterPage from '@/pages/RegisterPage';
 import LoginPage from '@/pages/LoginPage';
-import PrivateRoute from './context/PrivateRoute';
 
 
 

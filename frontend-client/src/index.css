@@ -14,10 +14,13 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
+  /* This could be background colour */
   --color-primary: oklch(0.985 0 0);
   --color-primary-dark: oklch(0.269 0 0);
-  --color-secondary: #2c5282;
-  --color-tertiary: #2d3748;
+  /* This could be like text colour */
+  --color-secondary: #2c5282; 
+  /* this is the special colour that stands out */
+  --color-accent: #2d3748;
 }
 
 @utility container {

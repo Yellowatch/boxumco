@@ -1,7 +1,9 @@
 import UpdateProfileForm from '@/components/profile/UpdateProfileForm';
 import DeleteAccountButton from '@/components/profile/DeleteAccountButton';
-import { Dialog } from "@/components/ui/dialog";
+import MfaSetup from '@/components/profile/MFASetup';
 import ChangePassword from '@/components/profile/ChangePassword';
+
+import { Dialog } from "@/components/ui/dialog";
 import { useAuth } from '@/context/AuthContext';
 import { useState, useEffect } from 'react';
 import { AlertCircle, Loader2 } from 'lucide-react';
@@ -82,6 +84,12 @@ const ProfilePage = () => {
                     ) : (
                         <UpdateProfileForm values={values} />
                     )}
+                </div>
+                <hr className="h-px bg-neutral-200 border-0 dark:bg-neutral-600"></hr>
+
+                {/* MFA */}
+                <div className='container w-2/3 space-y-6'>
+                    <MfaSetup />
                 </div>
                 <hr className="h-px bg-neutral-200 border-0 dark:bg-neutral-600"></hr>
 
