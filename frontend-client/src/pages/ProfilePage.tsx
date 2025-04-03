@@ -27,6 +27,7 @@ const ProfilePage = () => {
         postcode: "",
         company_name: "",
         dob: "",
+        mfa_enabled: false,
     });
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
@@ -45,6 +46,7 @@ const ProfilePage = () => {
                     postcode: data.postcode,
                     dob: data.dob,
                     company_name: data.client.company_name,
+                    mfa_enabled: data.mfa_enabled,
                 });
             } catch (error) {
                 console.error(error);
@@ -89,7 +91,20 @@ const ProfilePage = () => {
 
                 {/* MFA */}
                 <div className='container w-2/3 space-y-6'>
-                    <MfaSetup />
+                    {errorMsg && (
+                        <Alert variant="destructive">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>Error</AlertTitle>
+                            <AlertDescription>
+                                {errorMsg}
+                            </AlertDescription>
+                        </Alert>
+                    )}
+                    {loading && !values.mfa_enabled ? (
+                        <Loader2 className="animate-spin" />
+                    ) : (
+                        <MfaSetup initialMfaEnabled={values.mfa_enabled} />
+                    )}
                 </div>
                 <hr className="h-px bg-neutral-200 border-0 dark:bg-neutral-600"></hr>
 

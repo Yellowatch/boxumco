@@ -23,6 +23,7 @@ interface AuthContextType {
     verifyMfa: (tempToken: string, mfaCode: string) => Promise<{ success: boolean; error?: string }>;
     initiateMfaSetup: () => Promise<{ success: boolean; qrCode?: string; provisioningUri?: string; error?: string }>;
     confirmMfaSetup: (mfaCode: string) => Promise<{ success: boolean; error?: string }>;
+    disableMfa: () => Promise<{ success: boolean; data?: any; error?: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -64,25 +65,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
         } catch (error: any) {
             return { success: false, error: error.response?.data };
-        }
-    };
-
-    const verifyMfa = async (tempToken: string, mfaCode: string) => {
-        try {
-            const response = await axiosInstance.post('/api/users/token/mfa/', {
-                temp_token: tempToken,
-                mfa_code: mfaCode,
-            });
-            const { refresh, access, user_id, user_type } = response.data as { refresh: string; access: string; user_id: number; user_type: string };
-            localStorage.setItem('access_token', access);
-            localStorage.setItem('refresh_token', refresh);
-            localStorage.setItem('user_type', user_type);
-            setAccessToken(access);
-            setRefreshToken(refresh);
-            setUser({ user_id, user_type });
-            return { success: true };
-        } catch (error: any) {
-            return { success: false, error: 'Invalid MFA code or token expired. Please try again.' };
         }
     };
     
@@ -200,6 +182,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     };
 
+    const verifyMfa = async (tempToken: string, mfaCode: string) => {
+        try {
+            const response = await axiosInstance.post('/api/users/token/mfa/', {
+                temp_token: tempToken,
+                mfa_code: mfaCode,
+            });
+            const { refresh, access, user_id, user_type } = response.data as { refresh: string; access: string; user_id: number; user_type: string };
+            localStorage.setItem('access_token', access);
+            localStorage.setItem('refresh_token', refresh);
+            localStorage.setItem('user_type', user_type);
+            setAccessToken(access);
+            setRefreshToken(refresh);
+            setUser({ user_id, user_type });
+            return { success: true };
+        } catch (error: any) {
+            return { success: false, error: 'Invalid MFA code or token expired. Please try again.' };
+        }
+    };
+
     const confirmMfaSetup = async (mfaCode: string) => {
         try {
             await axiosInstance.post('/api/users/mfa/confirm/', { mfa_code: mfaCode });
@@ -208,6 +209,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             return { success: false, error: 'Invalid MFA code. Please try again.' };
         }
     };
+
+    const disableMfa = async () => {
+        try {
+          const response = await axiosInstance.post('/api/users/mfa/disable/');
+          return { success: true, data: response.data };
+        } catch (error: any) {
+          return { success: false, error: error.response?.data?.message || error.message || 'Failed to disable MFA' };
+        }
+      };
 
     const deleteUser = async () => {
         try {
@@ -229,7 +239,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, access_token, refresh_token, login, logout, register, registerBusiness, fetchUserDetails, deleteUser, changePassword, updateUser, checkIfClient, verifyMfa, initiateMfaSetup, confirmMfaSetup }}>
+        <AuthContext.Provider value={{ user, access_token, refresh_token, login, logout, register, registerBusiness, fetchUserDetails, deleteUser, changePassword, updateUser, checkIfClient, verifyMfa, initiateMfaSetup, confirmMfaSetup, disableMfa }}>
             {children}
         </AuthContext.Provider>
     );

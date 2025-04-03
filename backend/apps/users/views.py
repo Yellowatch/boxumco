@@ -36,6 +36,10 @@ class UserDetailsView(APIView):
         user = request.user
         user_data = CustomUserSerializer(user).data
         
+        # Add MFA status based on confirmed TOTP device
+        from .views import user_has_mfa  # or import from the appropriate module
+        user_data['mfa_enabled'] = user_has_mfa(user)
+        
         if user.user_type == 'client':
             client_data = ClientSerializer(user.client).data
             user_data['client'] = client_data
@@ -229,3 +233,16 @@ class ConfirmMFASetupView(APIView):
                 totp_device.save()
                 return Response({'detail': 'MFA enabled successfully'}, status=status.HTTP_200_OK)
         return Response({'detail': 'Invalid MFA code or no pending MFA setup'}, status=status.HTTP_400_BAD_REQUEST)
+    
+class DisableMFAView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        # Optionally, you could require the current MFA token in the request data for extra security.
+        totp_device = TOTPDevice.objects.filter(user=user, confirmed=True).first()
+        if totp_device:
+            totp_device.delete()  # Remove the MFA device
+            return Response({'detail': 'MFA has been disabled successfully.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'detail': 'No active MFA setup found.'}, status=status.HTTP_400_BAD_REQUEST)
