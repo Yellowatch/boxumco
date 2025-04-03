@@ -3,7 +3,7 @@ from .views import (
     ClientCreateView, SupplierCreateView, UserDetailsView, DeleteAccountView,
     ChangePasswordView, UpdateUserView, CheckIfClientView,
     MyTokenObtainPairView, MyTokenRefreshView, 
-    LoginWithMFAView, MFAValidationView, EnableMFAView, ConfirmMFASetupView
+    LoginWithMFAView, MFAValidationView, EnableMFAView, ConfirmMFASetupView, DisableMFAView
 )
 
 urlpatterns = [
@@ -20,4 +20,5 @@ urlpatterns = [
     path('token/mfa/', MFAValidationView.as_view(), name='mfa_validation'),
     path('mfa/enable/', EnableMFAView.as_view(), name='enable_mfa'),
     path('mfa/confirm/', ConfirmMFASetupView.as_view(), name='confirm_mfa'),
+    path('mfa/disable/', DisableMFAView.as_view(), name='disable_mfa'),
 ]
