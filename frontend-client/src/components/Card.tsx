@@ -1,9 +1,12 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
-export default function WhiteCard({ children }: { children: ReactNode }) {
-  return (
-    <div className="card">
-      {children}
-    </div>
-  );
+interface WhiteCardProps {
+  children: ReactNode;
+  className?: string;
 }
+
+const Card = ({ children, className = '' }: WhiteCardProps) => {
+  return <div className={`card ${className}`}>{children}</div>;
+};
+
+export default Card;
