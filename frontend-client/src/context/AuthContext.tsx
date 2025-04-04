@@ -172,6 +172,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     };
 
+    const deleteUser = async () => {
+        try {
+            await axiosInstance.delete('/api/users/user/delete/');
+            return { success: true };
+        } catch (error: any) {
+            return { success: false, error: error.response?.data?.detail };
+        }
+    };
+
     const initiateMfaSetup = async () => {
         try {
             const response = await axiosInstance.get('/api/users/mfa/enable/');
@@ -218,15 +227,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           return { success: false, error: error.response?.data?.message || error.message || 'Failed to disable MFA' };
         }
       };
-
-    const deleteUser = async () => {
-        try {
-            await axiosInstance.delete('/api/users/user/delete/');
-            return { success: true };
-        } catch (error: any) {
-            return { success: false, error: error.response?.data?.detail };
-        }
-    };
 
     useEffect(() => {
         const storedAccessToken = localStorage.getItem('access_token');

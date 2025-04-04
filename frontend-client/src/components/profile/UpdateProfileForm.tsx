@@ -58,7 +58,9 @@ interface ProfileValues {
     number: string;
     address: string;
     postcode: string;
-    company_name?: string;
+    client: {
+        company_name?: string;
+    };
     dob: string;
 }
 
@@ -73,7 +75,7 @@ const UpdateProfileForm = ({ values }: { values: ProfileValues }) => {
             number: values.number,
             address: values.address,
             postcode: values.postcode,
-            company_name: values.company_name ?? '',
+            company_name: values.client.company_name ?? '',
             dob: values.dob,
         },
     })
