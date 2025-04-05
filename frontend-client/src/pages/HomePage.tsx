@@ -1,20 +1,15 @@
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/context/AuthContext';
-import { toast } from "sonner"
+
 
 const HomePage = () => {
-    const { fetchUserDetails } = useAuth();
-
-    const onClickButton = async () => {
-        const data = await fetchUserDetails();
-        console.log("data", data);
-    };
 
     return (
         <>
-            <div className='container bg-primary dark:bg-primary-dark h-screen'>
-                <Button onClick={onClickButton}>Get user details</Button>
-            </div>
+            <section>
+                <div className='container grid grid-cols-5 grid-rows-4 gap-4'>
+                    <h1 className="col-span-2 row-span-2 row-start-2">A business that creates business</h1>
+                    <div className="bg-white size-full rounded-lg row-span-4 col-span-3"></div>
+                </div>
+            </section>
         </>
     );
 };

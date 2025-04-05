@@ -23,21 +23,43 @@
   --color-accent: #2d3748;
 }
 
-@utility container {
-  max-width: 1200px;
-  margin: auto;
-  padding-top: 40px;
-  padding-bottom: 40px;
+@layer utilities {
+  .container {
+    @apply max-w-7xl mx-auto py-8;
+  }
 }
 
 @layer components {
   .card{
-    @apply bg-white shadow-md rounded-lg p-6 max-w-xl;
+    @apply bg-white shadow-lg rounded-lg p-6 max-w-xl;
+  }
+  .dimmed-text {
+    @apply text-sm text-gray-500;
   }
 }
 
 @layer base {
+  body {
+    @apply bg-primary dark:bg-primary-dark text-primary-dark dark:text-primary antialiased;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.6;
+  }
+  section {
+    @apply py-12 px-4 md:px-8 my-8;
+  }
   h1 {
-    @apply text-4xl font-bold;
+    @apply text-4xl font-bold tracking-tight text-primary-dark dark:text-primary sm:text-5xl;
+  }
+  h2 {
+    @apply text-3xl font-semibold tracking-tight text-primary-dark dark:text-primary sm:text-4xl;
+  }
+  h3 {
+    @apply text-2xl font-medium tracking-tight text-primary-dark dark:text-primary sm:text-3xl;
+  }
+  p {
+    @apply mt-2 text-lg text-gray-700;
+  }
+  hr {
+    @apply h-px bg-neutral-200 border-0 dark:bg-neutral-600;
   }
 }

@@ -45,7 +45,7 @@ const DisableMFA = ({ onDisabled }: DisableMFAProps) => {
     return (
         <Dialog>
             <div className="space-y-6">
-                <p>MFA is currently enabled on your account.</p>
+                <p className='dimmed-text'>MFA is currently enabled on your account.</p>
                 <Button variant="destructive" asChild>
                     <DialogTrigger>Disable MFA</DialogTrigger>
                 </Button>

@@ -22,16 +22,16 @@ const ProfilePage = () => {
         <div className='bg-primary dark:bg-dark dark:text-white'>
             {/* Heading */}
             <div className='container w-2/3'>
-                <h1 className='text-4xl font-semibold'>Profile Page</h1>
-                <p className='font-extralight opacity-50'>
+                <h1>Profile Page</h1>
+                <p className='dimmed-text'>
                     You may view or change your personal information below.
                 </p>
             </div>
-            <hr className="h-px bg-neutral-200 border-0 dark:bg-neutral-600" />
+            <hr />
 
             {/* Edit details */}
             <div className='container w-2/3 space-y-6'>
-                <h1 className='text-2xl font-semibold'>Edit Details</h1>
+                <h2>Edit Details</h2>
                 {isLoading ? (
                     // Loader is displayed only in the edit details section
                     <div className="flex justify-center">
@@ -48,11 +48,11 @@ const ProfilePage = () => {
                     <UpdateProfileForm values={data.data} />
                 )}
             </div>
-            <hr className="h-px bg-neutral-200 border-0 dark:bg-neutral-600" />
+            <hr />
 
             {/* MFA */}
             <div className='container w-2/3 space-y-6'>
-                <h1 className="text-3xl font-semibold">Multi-Factor Authentication</h1>
+                <h2>Multi-Factor Authentication</h2>
                 {isLoading ? (
                     // Loader is displayed only in the edit details section
                     <div className="flex justify-center">
@@ -69,23 +69,23 @@ const ProfilePage = () => {
                     <MfaSetup initialMfaEnabled={data.data.mfa_enabled} />
                 )}
             </div>
-            <hr className="h-px bg-neutral-200 border-0 dark:bg-neutral-600" />
+            <hr />
 
             {/* Change Password */}
             <div className='container w-2/3 space-y-6'>
-                <h1 className='text-2xl font-semibold'>Change Password</h1>
-                <p className='font-extralight opacity-50'>
+                <h2>Change Password</h2>
+                <p className='dimmed-text'>
                     Update your password associated with your account.
                 </p>
                 <ChangePassword />
             </div>
-            <hr className="h-px bg-neutral-200 border-0 dark:bg-neutral-600" />
+            <hr />
 
             {/* Delete Account */}
             <div className='container w-2/3 space-y-2'>
                 <Dialog>
-                    <h1 className='text-2xl font-semibold'>Delete Account</h1>
-                    <p className='font-extralight opacity-50'>
+                    <h2>Delete Account</h2>
+                    <p className='dimmed-text'>
                         This will delete your account permanently. We cannot retrieve your account once this action is complete.
                     </p>
                     <div className='mt-6'>
