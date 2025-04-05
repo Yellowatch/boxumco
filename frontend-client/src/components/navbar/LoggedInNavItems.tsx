@@ -16,13 +16,23 @@ import {
 } from "@/components/ui/dialog"
 import { UserRound } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from "sonner";
 
-interface LoggedInNavItemsProps {
-    onClickLogout: () => void;
-}
+// Context
+import { useAuth } from "@/context/AuthContext"
 
-export default function LoggedInNavItems({ onClickLogout }: LoggedInNavItemsProps) {
+export default function LoggedInNavItems() {
     const navigate = useNavigate();
+    const { logout } = useAuth();
+
+    const onClickLogout = () => {
+        toast(
+            <div>
+                <p>You have successfully logged out!</p>
+            </div>
+        );
+        logout();
+    };
 
     return (
         <>

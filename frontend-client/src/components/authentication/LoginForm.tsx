@@ -59,11 +59,6 @@ export function LoginForm() {
         },
     });
 
-    // Use useMutation with explicit generics.
-    // TVariables: { email: string; password: string }
-    // TData: LoginResponse
-    // TError: Error
-    // TContext: unknown
     const loginMutation = useMutation<LoginResponse, Error, { email: string; password: string }, unknown>({
         mutationFn: async (values: { email: string; password: string }): Promise<LoginResponse> => {
             // First, check if the user is a client.

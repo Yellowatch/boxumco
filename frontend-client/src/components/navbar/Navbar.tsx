@@ -10,7 +10,6 @@ import {
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { Button } from "@/components/ui/button"
-import { toast } from "sonner";
 
 // My components
 import NavItemsBurger from "./NavItemsBurger";
@@ -23,17 +22,8 @@ import { useAuth } from "@/context/AuthContext"
 
 
 function Navbar() {
-    const { user, refresh_token, logout } = useAuth();
+    const { user, refresh_token } = useAuth();
     const navigate = useNavigate();
-
-    const onClickLogout = () => {
-        toast(
-            <div>
-                <p>You have successfully logged out!</p>
-            </div>
-        );
-        logout();
-    };
 
     return (
         <>
@@ -55,7 +45,7 @@ function Navbar() {
                             {(user && user.refresh_token) || refresh_token ? (
                                 <>
                                     <NavigationMenuItem>
-                                        <LoggedInNavItems onClickLogout={onClickLogout} />
+                                        <LoggedInNavItems />
                                     </NavigationMenuItem>
                                 </>
                             ) : (
