@@ -27,7 +27,7 @@ function Navbar() {
 
     return (
         <>
-            <header className="flex items-center justify-between p-4 bg-white dark:bg-neutral-950 sticky top-0">
+            <header className="flex items-center justify-between p-4 bg-white dark:bg-neutral-950 sticky top-0 z-50">
                 {/* Left Section: Logo */}
                 <div className="flex items-center">
                     <Button variant="ghost" size="default" onClick={() => navigate('/')}>
