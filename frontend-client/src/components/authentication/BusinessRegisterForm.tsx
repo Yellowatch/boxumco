@@ -131,8 +131,8 @@ const BusinessRegisterForm = () => {
         values.number,
         values.address,
         values.postcode,
-        values.company_name,
         values.dob,
+        values.company_name,
         values.company_address,
         values.company_description,
         values.company_postcode,
@@ -141,6 +141,7 @@ const BusinessRegisterForm = () => {
         values.company_logo,
         values.subcategories,
         values.password,
+        values.confirm_password
       );
       if (!response.success) {
         if (response.error) {

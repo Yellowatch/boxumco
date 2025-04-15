@@ -1,7 +1,9 @@
+# apps/users/models.py
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 class CustomUser(AbstractUser):
+    username = None  # Remove username field
     USER_TYPE_CHOICES = (
         ('client', 'Client'),
         ('supplier', 'Supplier'),
@@ -17,14 +19,19 @@ class CustomUser(AbstractUser):
     password = models.CharField(max_length=128)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = []
 
     def __str__(self):
-        return f"{self.username} ({self.user_type})"
+        return f"{self.email} ({self.user_type})"
+
 
 class Client(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     company_name = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"Client: {self.user.email}"
+
 
 class Supplier(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
@@ -36,3 +43,6 @@ class Supplier(models.Model):
     company_description = models.CharField(max_length=250)
     company_logo = models.ImageField(upload_to='logos/')
     subcategories = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"Supplier: {self.user.email}"

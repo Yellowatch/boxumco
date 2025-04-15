@@ -9,3 +9,5 @@ django-otp
 pyotp
 qrcode 
 pillow
+django-allauth
+dj-rest-auth

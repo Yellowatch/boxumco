@@ -5,16 +5,48 @@ interface AuthContextType {
     user: any;
     access_token: string | null;
     refresh_token: string | null;
-    login: (email: string, password: string) => Promise<{ 
-        success: boolean; 
-        data?: any; 
-        error?: any; 
+    login: (
+        email: string,
+        password: string
+    ) => Promise<{
+        success: boolean;
+        data?: any;
+        error?: any;
         mfaRequired?: boolean;
         temp_token?: string;
     }>;
     logout: () => void;
-    register: (first_name: string, last_name: string, email: string, number: string, address: string, postcode: string, company_name: string, dob: string, password: string) => Promise<{ success: boolean; data?: any; error?: any }>;
-    registerBusiness: (first_name: string, last_name: string, email: string, number: string, address: string, postcode: string, dob: string, company_name: string, company_address: string, company_description: string, company_postcode: string, company_number: string, company_type: string, company_logo: File, subcategories: string, password: string) => Promise<{ success: boolean; data?: any; error?: any }>;
+    register: (
+        first_name: string,
+        last_name: string,
+        email: string,
+        number: string,
+        address: string,
+        postcode: string,
+        company_name: string,
+        dob: string,
+        password: string,
+        confirm_password: string
+    ) => Promise<{ success: boolean; data?: any; error?: any }>;
+    registerBusiness: (
+        first_name: string,
+        last_name: string,
+        email: string,
+        number: string,
+        address: string,
+        postcode: string,
+        dob: string,
+        company_name: string,
+        company_address: string,
+        company_description: string,
+        company_postcode: string,
+        company_number: string,
+        company_type: string,
+        company_logo: File,
+        subcategories: string,
+        password: string,
+        confirm_password: string
+    ) => Promise<{ success: boolean; data?: any; error?: any }>;
     fetchUserDetails: () => Promise<any>;
     deleteUser: () => Promise<{ success: boolean; error?: any }>;
     changePassword: (current_password: string, new_password: string) => Promise<{ success: boolean; error?: any }>;
@@ -37,6 +69,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [access_token, setAccessToken] = useState(localStorage.getItem("access_token") || "");
     const [refresh_token, setRefreshToken] = useState(localStorage.getItem("refresh_token") || "");
 
+    // Login function using the dj-rest-auth endpoint with MFA check.
     const login = async (email: string, password: string) => {
         try {
             interface LoginResponse {
@@ -44,20 +77,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 access: string;
                 user_id: number;
                 user_type: string;
-                temp_token?: string; // Optional property for MFA
+                temp_token?: string;
             }
-            const response = await axiosInstance.post<LoginResponse>('/api/users/token/login/', { email, password });
-            // If MFA is required, the backend returns a 202 status with a temporary token
+            // Updated endpoint: now using '/auth/login/'.
+            const response = await axiosInstance.post<LoginResponse>('/api/users/auth/login/', { email, password });
+
+            // If MFA is required, the backend responds with 202 and a temporary token.
             if (response.status === 202) {
-                // You can store the temp_token in state or localStorage (if appropriate)
-                // Then navigate to an MFA challenge page or render an MFA form component
                 return { success: true, mfaRequired: true, temp_token: response.data.temp_token };
             } else {
                 const { refresh, access, user_id, user_type } = response.data as LoginResponse;
                 setAccessToken(access);
                 setRefreshToken(refresh);
-                const user = { user_id, user_type };
-                setUser(user);
+                setUser({ user_id, user_type });
                 localStorage.setItem('access_token', access);
                 localStorage.setItem('refresh_token', refresh);
                 localStorage.setItem('user_type', user_type);
@@ -67,7 +99,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             return { success: false, error: error.response?.data };
         }
     };
-    
 
     const checkIfClient = async (email: string) => {
         try {
@@ -87,16 +118,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         localStorage.removeItem('user_type');
     };
 
-    const register = async (first_name: string, last_name: string, email: string, number: string, address: string, postcode: string, company_name: string, dob: string, password: string) => {
-        try {
-            const response = await axiosInstance.post('/api/users/clients/', { first_name, last_name, email, number, address, postcode, company_name, dob, password });
-            return { success: true, data: response.data };
-        } catch (error: any) {
-            return { success: false, error: error.response?.data };
-        }
-    };
-
-    const registerBusiness = async (
+    // Registration for clients with confirm_password included.
+    // Updated endpoint: '/auth/registration/'.
+    const register = async (
         first_name: string,
         last_name: string,
         email: string,
@@ -105,6 +129,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         postcode: string,
         company_name: string,
         dob: string,
+        password: string,
+        confirm_password: string
+    ) => {
+        try {
+            const payload = {
+                first_name,
+                last_name,
+                email,
+                number,
+                address,
+                postcode,
+                company_name,
+                dob,
+                user_type: 'client',  // Specify client type.
+                password1: password,
+                password2: confirm_password,
+            };
+            const response = await axiosInstance.post('/api/users/auth/registration/', payload);
+            return { success: true, data: response.data };
+        } catch (error: any) {
+            return { success: false, error: error.response?.data };
+        }
+    };
+
+    // Registration for suppliers (business) with confirm_password included.
+    // Updated endpoint: '/auth/registration/'.
+    const registerBusiness = async (
+        first_name: string,
+        last_name: string,
+        email: string,
+        number: string,
+        address: string,
+        postcode: string,
+        dob: string,
+        company_name: string,
         company_address: string,
         company_description: string,
         company_postcode: string,
@@ -112,7 +171,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         company_type: string,
         company_logo: File,
         subcategories: string,
-        password: string
+        password: string,
+        confirm_password: string
     ) => {
         try {
             const formData = new FormData();
@@ -131,38 +191,45 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             formData.append('company_type', company_type);
             formData.append('company_logo', company_logo);
             formData.append('subcategories', subcategories);
-            formData.append('password', password);
-    
-            const response = await axiosInstance.post('/api/users/suppliers/', formData, {
+            formData.append('user_type', 'supplier');  // Specify supplier type.
+            formData.append('password1', password);
+            formData.append('password2', confirm_password);
+
+            const response = await axiosInstance.post('/api/users/auth/registration/', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-    
+
             return { success: true, data: response.data };
         } catch (error: any) {
             return { success: false, error: error.response?.data };
         }
     };
 
+    // Change password via dj-rest-auth endpoint.
+    // Updated endpoint: '/auth/password/change/'.
     const changePassword = async (current_password: string, new_password: string) => {
         try {
-            const response = await axiosInstance.post('/api/users/user/change-password/', { current_password, new_password });
+            const response = await axiosInstance.post('/api/users/auth/password/change/', { current_password, new_password });
             return { success: true, data: response.data };
         } catch (error: any) {
             return { success: false, error: error.response?.data };
         }
     };
 
+    // Fetch user details from dj-rest-auth endpoint.
+    // Updated endpoint: '/auth/user/'.
     const fetchUserDetails = async () => {
         try {
-            const response = await axiosInstance.get('/api/users/user/');
+            const response = await axiosInstance.get('/api/users/auth/user/');
             return { success: true, data: response.data };
         } catch (error: any) {
-            return { success: false, error: error.response?.data || "Failed to fetch user details" };
+            return { success: false, error: error.response?.data || 'Failed to fetch user details' };
         }
     };
 
+    // Custom update and delete endpoints remain unchanged.
     const updateUser = async (userData: any) => {
         try {
             const response = await axiosInstance.put('/api/users/user/update/', userData);
@@ -181,9 +248,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     };
 
+    // MFA setup: updated endpoints for dj‑all‑auth.
     const initiateMfaSetup = async () => {
         try {
-            const response = await axiosInstance.get('/api/users/mfa/enable/');
+            const response = await axiosInstance.get('/api/users/auth/mfa/enable/');
             const { qr_code, provisioning_uri } = response.data as { qr_code: string; provisioning_uri: string };
             return { success: true, qrCode: qr_code, provisioningUri: provisioning_uri };
         } catch (error: any) {
@@ -191,9 +259,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     };
 
+    // Updated MFA verification endpoint: '/auth/mfa-verify/'.
     const verifyMfa = async (tempToken: string, mfaCode: string) => {
         try {
-            const response = await axiosInstance.post('/api/users/token/mfa/', {
+            const response = await axiosInstance.post('/api/users/auth/mfa-verify/', {
                 temp_token: tempToken,
                 mfa_code: mfaCode,
             });
@@ -210,23 +279,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     };
 
+    // Updated MFA confirmation endpoint: '/auth/mfa/confirm/'.
     const confirmMfaSetup = async (mfaCode: string) => {
         try {
-            await axiosInstance.post('/api/users/mfa/confirm/', { mfa_code: mfaCode });
+            await axiosInstance.post('/api/users/auth/mfa/confirm/', { mfa_code: mfaCode });
             return { success: true };
         } catch (error: any) {
             return { success: false, error: 'Invalid MFA code. Please try again.' };
         }
     };
 
+    // Updated MFA disable endpoint: '/auth/mfa/disable/'.
     const disableMfa = async () => {
         try {
-          const response = await axiosInstance.post('/api/users/mfa/disable/');
-          return { success: true, data: response.data };
+            const response = await axiosInstance.post('/api/users/auth/mfa/disable/');
+            return { success: true, data: response.data };
         } catch (error: any) {
-          return { success: false, error: error.response?.data?.message || error.message || 'Failed to disable MFA' };
+            return { success: false, error: error.response?.data?.message || error.message || 'Failed to disable MFA' };
         }
-      };
+    };
 
     useEffect(() => {
         const storedAccessToken = localStorage.getItem('access_token');
@@ -234,12 +305,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (storedAccessToken && storedRefreshToken) {
             setAccessToken(storedAccessToken);
             setRefreshToken(storedRefreshToken);
-            // Optionally, fetch user data using the stored token
+            // Optionally, fetch user details using the stored token
         }
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, access_token, refresh_token, login, logout, register, registerBusiness, fetchUserDetails, deleteUser, changePassword, updateUser, checkIfClient, verifyMfa, initiateMfaSetup, confirmMfaSetup, disableMfa }}>
+        <AuthContext.Provider value={{
+            user,
+            access_token,
+            refresh_token,
+            login,
+            logout,
+            register,
+            registerBusiness,
+            fetchUserDetails,
+            deleteUser,
+            changePassword,
+            updateUser,
+            checkIfClient,
+            verifyMfa,
+            initiateMfaSetup,
+            confirmMfaSetup,
+            disableMfa
+        }}>
             {children}
         </AuthContext.Provider>
     );
@@ -247,6 +335,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 export const useAuth = (): AuthContextType => {
     const context = useContext(AuthContext);
-    if (!context) throw new Error("useAuth must be used within an AuthProvider");
+    if (!context) throw new Error('useAuth must be used within an AuthProvider');
     return context;
 };
