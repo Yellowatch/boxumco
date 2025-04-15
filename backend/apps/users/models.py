@@ -1,7 +1,13 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+
 class CustomUser(AbstractUser):
+    # Remove the username field
+    username = None
+
     USER_TYPE_CHOICES = (
         ('client', 'Client'),
         ('supplier', 'Supplier'),
@@ -17,10 +23,11 @@ class CustomUser(AbstractUser):
     password = models.CharField(max_length=128)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = []  # Remove username from required fields
 
     def __str__(self):
-        return f"{self.username} ({self.user_type})"
+        # Use email instead of username for string representation.
+        return f"{self.email} ({self.user_type})"
 
 class Client(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
