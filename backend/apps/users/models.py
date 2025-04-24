@@ -1,11 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
-from django.contrib.auth.models import AbstractUser
-from django.db import models
+from .managers import CustomUserManager
 
 class CustomUser(AbstractUser):
-    # Remove the username field
+    # Remove the username field and use email instead.
     username = None
 
     USER_TYPE_CHOICES = (
@@ -22,16 +20,20 @@ class CustomUser(AbstractUser):
     dob = models.DateField(default='2000-01-01')
     password = models.CharField(max_length=128)
 
+    # Use email as the unique identifier.
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []  # Remove username from required fields
+    REQUIRED_FIELDS = []  # No other required fields
+
+    objects = CustomUserManager()  # <— use your manager
 
     def __str__(self):
-        # Use email instead of username for string representation.
         return f"{self.email} ({self.user_type})"
+
 
 class Client(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)
     company_name = models.CharField(max_length=255, blank=True, null=True)
+
 
 class Supplier(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, primary_key=True)

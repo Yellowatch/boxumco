@@ -3,7 +3,8 @@ from .views import (
     ClientCreateView, SupplierCreateView, UserDetailsView, DeleteAccountView,
     ChangePasswordView, UpdateUserView, CheckIfClientView,
     MyTokenObtainPairView, MyTokenRefreshView, 
-    LoginWithMFAView, MFAValidationView, EnableMFAView, ConfirmMFASetupView, DisableMFAView
+    LoginWithMFAView, MFAValidationView, EnableMFAView, ConfirmMFASetupView, DisableMFAView,
+    ConfirmEmailView
 )
 
 urlpatterns = [
@@ -12,6 +13,7 @@ urlpatterns = [
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', MyTokenRefreshView.as_view(), name='token_refresh'),
     path('user/', UserDetailsView.as_view(), name='user-details'),
+    path('confirm-email/', ConfirmEmailView.as_view(), name='confirm-email'),
     path('user/delete/', DeleteAccountView.as_view(), name='delete'),
     path('user/change-password/', ChangePasswordView.as_view(), name='change-password'),
     path('user/update/', UpdateUserView.as_view(), name='update-user'),

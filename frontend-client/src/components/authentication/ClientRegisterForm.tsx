@@ -52,7 +52,7 @@ type RegisterResponse = {
 
 const ClientRegisterForm = () => {
   const [errorMsg, setErrorMsg] = useState('');
-  const { register: registerClient } = useAuth();
+  const { register } = useAuth();
   const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -74,7 +74,7 @@ const ClientRegisterForm = () => {
   // Wrap the registration function in a mutation.
   const registerMutation = useMutation<RegisterResponse, Error, z.infer<typeof formSchema>, unknown>({
     mutationFn: async (values) => {
-      const response = await registerClient(
+      const response = await register(
         values.first_name,
         values.last_name,
         values.email,
@@ -91,16 +91,14 @@ const ClientRegisterForm = () => {
         } else if (response.error?.message) {
           throw new Error(response.error.message);
         } else {
-          throw new Error("An unknown error occurred. Please try again later.");
+          throw new Error("Uh oh, something went wrong! Please try again later.");
         }
       }
       return response;
     },
     onSuccess: (data, variables) => {
       toast(
-        <div>
-          <p>You have successfully registered, {variables.first_name}!</p>
-        </div>
+        `You have successfully registered, ${variables.first_name}! Check your email for a verification link.`,
       );
       navigate('/login');
       window.scrollTo(0, 0);

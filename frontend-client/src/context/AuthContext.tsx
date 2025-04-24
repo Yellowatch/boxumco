@@ -5,16 +5,17 @@ interface AuthContextType {
     user: any;
     access_token: string | null;
     refresh_token: string | null;
-    login: (email: string, password: string) => Promise<{ 
-        success: boolean; 
-        data?: any; 
-        error?: any; 
+    login: (email: string, password: string) => Promise<{
+        success: boolean;
+        data?: any;
+        error?: any;
         mfaRequired?: boolean;
         temp_token?: string;
     }>;
     logout: () => void;
     register: (first_name: string, last_name: string, email: string, number: string, address: string, postcode: string, company_name: string, dob: string, password: string) => Promise<{ success: boolean; data?: any; error?: any }>;
     registerBusiness: (first_name: string, last_name: string, email: string, number: string, address: string, postcode: string, dob: string, company_name: string, company_address: string, company_description: string, company_postcode: string, company_number: string, company_type: string, company_logo: File, subcategories: string, password: string) => Promise<{ success: boolean; data?: any; error?: any }>;
+    confirmEmail: (uid: string, token: string) => Promise<{ success: boolean; error?: any }>;
     fetchUserDetails: () => Promise<any>;
     deleteUser: () => Promise<{ success: boolean; error?: any }>;
     changePassword: (current_password: string, new_password: string) => Promise<{ success: boolean; error?: any }>;
@@ -67,7 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             return { success: false, error: error.response?.data };
         }
     };
-    
+
 
     const checkIfClient = async (email: string) => {
         try {
@@ -132,16 +133,27 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             formData.append('company_logo', company_logo);
             formData.append('subcategories', subcategories);
             formData.append('password', password);
-    
+
             const response = await axiosInstance.post('/api/users/suppliers/', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-    
+
             return { success: true, data: response.data };
         } catch (error: any) {
             return { success: false, error: error.response?.data };
+        }
+    };
+
+    const confirmEmail = async (uid: string, token: string) => {
+        try {
+            await axiosInstance.get('/api/users/confirm-email/', {
+                params: { uid, token }
+            });
+            return { success: true };
+        } catch (error: any) {
+            return { success: false, error: error.response?.data || error.message };
         }
     };
 
@@ -221,12 +233,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const disableMfa = async () => {
         try {
-          const response = await axiosInstance.post('/api/users/mfa/disable/');
-          return { success: true, data: response.data };
+            const response = await axiosInstance.post('/api/users/mfa/disable/');
+            return { success: true, data: response.data };
         } catch (error: any) {
-          return { success: false, error: error.response?.data?.message || error.message || 'Failed to disable MFA' };
+            return { success: false, error: error.response?.data?.message || error.message || 'Failed to disable MFA' };
         }
-      };
+    };
 
     useEffect(() => {
         const storedAccessToken = localStorage.getItem('access_token');
@@ -239,7 +251,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }, []);
 
     return (
-        <AuthContext.Provider value={{ user, access_token, refresh_token, login, logout, register, registerBusiness, fetchUserDetails, deleteUser, changePassword, updateUser, checkIfClient, verifyMfa, initiateMfaSetup, confirmMfaSetup, disableMfa }}>
+        <AuthContext.Provider value={
+            { 
+                user, 
+                access_token, 
+                refresh_token, 
+                login, 
+                logout, 
+                register, 
+                registerBusiness, 
+                confirmEmail,
+                fetchUserDetails, 
+                deleteUser, 
+                changePassword,
+                updateUser, 
+                checkIfClient, 
+                verifyMfa, 
+                initiateMfaSetup, 
+                confirmMfaSetup, 
+                disableMfa 
+            }}>
             {children}
         </AuthContext.Provider>
     );

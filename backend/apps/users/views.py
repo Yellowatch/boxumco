@@ -13,6 +13,11 @@ from .serializers import MyTokenObtainPairSerializer
 from django.http import JsonResponse
 from django.views import View
 
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str
+from django.contrib.auth.tokens import default_token_generator
+from django.shortcuts import get_object_or_404
+
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -30,6 +35,42 @@ class SupplierCreateView(generics.CreateAPIView):
     permission_classes = [AllowAny]
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
+
+class ConfirmEmailView(APIView):
+    """
+    Confirms a user’s email by activating their account
+    when given a valid uid and token in the query params.
+    """
+    permission_classes = []  # Allow unauthenticated access
+
+    def get(self, request, *args, **kwargs):
+        uidb64 = request.query_params.get('uid')
+        token = request.query_params.get('token')
+        if uidb64 is None or token is None:
+            return Response(
+                {"detail": "Missing uid or token."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        try:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = get_object_or_404(CustomUser, pk=uid)
+        except (TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+            return Response(
+                {"detail": "Invalid confirmation link."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            return Response(
+                {"detail": "Email confirmed, account is now active."},
+                status=status.HTTP_200_OK
+            )
+        return Response(
+            {"detail": "Token invalid or expired."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
 
 class UserDetailsView(APIView):
     def get(self, request):

@@ -14,6 +14,8 @@ import HomePage from '@/pages/HomePage';
 import RegisterPage from '@/pages/RegisterPage';
 import LoginPage from '@/pages/LoginPage';
 
+import ConfirmHandler from '@/handlers/ConfirmHandler';
+
 const queryClient = new QueryClient()
 
 function App() {
@@ -28,6 +30,10 @@ function App() {
                                 <Route path="/" element={<HomePage />} />
                                 <Route path="/register" element={<RegisterPage />} />
                                 <Route path="/login" element={<LoginPage />} />
+                                <Route
+                                    path="/api/users/confirm-email"
+                                    element={<ConfirmHandler />}
+                                />
                                 <Route element={<PrivateRoute />}>
                                     <Route path="/profile" element={<ProfilePage />} />
                                 </Route>

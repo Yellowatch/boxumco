@@ -155,7 +155,7 @@ export function LoginForm() {
                                 </FormItem>
                             )}
                         />
-                        <Button variant="link" className="p-0" onClick={() => navigate('/forgot-password')}>
+                        <Button type="button" variant="link" className="p-0" onClick={() => navigate('/forgot-password')}>
                             I forgot my password
                         </Button>
                     </div>
