@@ -1,44 +1,53 @@
 from rest_framework import serializers
 from .models import CustomUser, Client, Supplier
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 from django.db import IntegrityError
+from rest_framework.exceptions import AuthenticationFailed
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     email = serializers.EmailField(required=True)
-    password = serializers.CharField(required=True, write_only=True)
+    password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-        email = attrs.get("email")
-        password = attrs.get("password")
+        email = attrs.get('email')
+        password = attrs.get('password')
 
-        # Since your CustomUser sets USERNAME_FIELD = 'email',
-        # calling authenticate(username=email, password=password) is correct.
+        # 1) Fetch the user by email to inspect is_active
+        User = get_user_model()
+        user_obj = User.objects.filter(email=email).first()
+        
+        print(f"User object: {user_obj}")  # Debugging line
+        print(f"User active status: {user_obj.is_active if user_obj else 'No user found'}")  # Debugging line
+
+        # 2) If user exists but is inactive, raise a clear error
+        if user_obj and not user_obj.is_active:
+            raise AuthenticationFailed(
+                'Account is inactive. Please click the verification link in your email.',
+                code='no_active_account'
+            ) 
+
+        # 3) Otherwise proceed with normal authentication
         user = authenticate(username=email, password=password)
-
         if user is None:
-            raise serializers.ValidationError({"error": "Invalid email or password"})
+            raise AuthenticationFailed('Invalid email or password.') 
 
+        # 4) On success, build tokens
         refresh = self.get_token(user)
-
-        data = {
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-        }
+        data = {'refresh': str(refresh), 'access': str(refresh.access_token)}
         data.update({
-            "user_id": user.id,
-            "user_type": user.user_type,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "email": user.email,
+            'user_id': user.id,
+            'user_type': user.user_type,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
         })
-
         return data
+
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        # Removed 'username'; using only email as the identifier
         fields = [
             'password', 
             'user_type', 
@@ -85,7 +94,6 @@ class ClientSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        # Build user data without the username field
         user_data = {
             'email': validated_data['email'],
             'password': validated_data['password'],

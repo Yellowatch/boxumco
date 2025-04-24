@@ -27,9 +27,7 @@ export default function LoggedInNavItems() {
 
     const onClickLogout = () => {
         toast(
-            <div>
-                <p>You have successfully logged out!</p>
-            </div>
+            'You have successfully logged out!'
         );
         logout();
     };

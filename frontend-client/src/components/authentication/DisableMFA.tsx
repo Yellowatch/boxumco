@@ -26,9 +26,7 @@ const DisableMFA = ({ onDisabled }: DisableMFAProps) => {
         onSuccess: (result) => {
             if (result.success) {
                 toast(
-                    <div>
-                        <p>MFA has been disabled.</p>
-                    </div>
+                    'MFA has been disabled.'
                 );
                 onDisabled();
             }

@@ -186,22 +186,42 @@ class LoginWithMFAView(APIView):
     def post(self, request):
         email = request.data.get('email')
         password = request.data.get('password')
+
+        # 1) Pre-check: is there a user with this email?
+        try:
+            user_obj = CustomUser.objects.get(email=email)
+        except CustomUser.DoesNotExist:
+            user_obj = None
+
+        # 2) If the user exists but is not active, return a specific error
+        if user_obj and not user_obj.is_active:
+            return Response(
+                {'detail': 'Account is inactive. Please click the verification link in your email.'},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        # 3) Otherwise attempt normal authentication
         user = authenticate(request, email=email, password=password)
         if user:
+            # 4) If MFA is enabled, return a temporary token
             if user_has_mfa(user):
                 temp_token = create_temp_mfa_token(user)
                 return Response(
                     {'detail': 'MFA required', 'temp_token': temp_token},
                     status=status.HTTP_202_ACCEPTED
                 )
-            else:
-                # No MFA enabled: issue tokens immediately
-                refresh = RefreshToken.for_user(user)
-                return Response({
-                    'refresh': str(refresh),
-                    'access': str(refresh.access_token)
-                }, status=status.HTTP_200_OK)
-        return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+            # 5) No MFA: issue JWTs immediately
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token)
+            }, status=status.HTTP_200_OK)
+
+        # 6) Fallback: truly invalid credentials
+        return Response(
+            {'detail': 'Incorrect email or password.'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
 
 class MFAValidationView(APIView):
     permission_classes = []  # AllowAny

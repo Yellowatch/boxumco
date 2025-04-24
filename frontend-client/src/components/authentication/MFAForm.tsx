@@ -61,19 +61,11 @@ export function MfaForm({ tempToken }: MfaFormProps) {
             const userDetails = await fetchUserDetails();
             if (userDetails.success) {
                 toast(
-                    <div>
-                        <p>
-                            You have successfully logged in, {userDetails.data.first_name} {userDetails.data.last_name}!
-                        </p>
-                    </div>
+                    `You have successfully logged in, ${userDetails.data.first_name} ${userDetails.data.last_name}!`
                 );
             } else {
                 toast(
-                    <div>
-                        <p>
-                            You have successfully logged in!
-                        </p>
-                    </div>
+                    'You have successfully logged in!'
                 );
             }
             navigate('/');

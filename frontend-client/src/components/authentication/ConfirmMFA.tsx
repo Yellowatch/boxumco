@@ -35,9 +35,7 @@ const ConfirmMFA = ({ onConfirmed }: ConfirmMFAProps) => {
         onSuccess: (result) => {
             if (result.success) {
                 toast(
-                    <div>
-                        <p>MFA has been successfully enabled!</p>
-                    </div>
+                    'MFA has been successfully enabled!'
                 );
                 onConfirmed();
             }

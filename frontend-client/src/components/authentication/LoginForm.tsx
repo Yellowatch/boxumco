@@ -63,11 +63,15 @@ export function LoginForm() {
         mutationFn: async (values: { email: string; password: string }): Promise<LoginResponse> => {
             // First, check if the user is a client.
             const isClient = await checkIfClient(values.email);
-            if (isClient.success && isClient.data.is_client === true) {
+            console.log(isClient);
+            if (isClient.success && isClient.data.is_client === true && isClient.data.user_exists === true) {
                 const response = await login(values.email, values.password);
                 if (!response.success) {
+                    console.log(response.error);
                     if (response.error?.error) {
                         throw new Error(response.error.error);
+                    } else if (response.error?.detail) {
+                        throw new Error(response.error.detail);
                     } else if (response.error?.non_field_errors) {
                         throw new Error(response.error.non_field_errors.join(' '));
                     } else {
@@ -75,8 +79,10 @@ export function LoginForm() {
                     }
                 }
                 return response;
-            } else if (isClient.success && isClient.data.is_client === false) {
+            } else if (isClient.success && isClient.data.is_client === false && isClient.data.user_exists === true) {
                 throw new Error("Please log in using the supplier login page.");
+            } else if (isClient.success && isClient.data.is_client === false && isClient.data.user_exists === false) {
+                throw new Error("User does not exist. Please register.");
             } else if (!isClient.success) {
                 throw new Error(isClient.error);
             }
@@ -94,17 +100,11 @@ export function LoginForm() {
                 const userDetails = await fetchUserDetails();
                 if (userDetails.success) {
                     toast(
-                        <div>
-                            <p>
-                                You have successfully logged in, {userDetails.data.first_name} {userDetails.data.last_name}!
-                            </p>
-                        </div>
+                        `You have successfully logged in, ${userDetails.data.first_name} ${userDetails.data.last_name}!`
                     );
                 } else {
                     toast(
-                        <div>
-                            <p>You have successfully logged in!</p>
-                        </div>
+                        'You have successfully logged in!'
                     );
                 }
                 navigate('/');

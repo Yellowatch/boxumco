@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Loader2, MoveRight } from 'lucide-react';
-import Card from '../Card';
+import Card from '@/components/Card';
 import { useMutation } from '@tanstack/react-query';
 
 interface EnableMFAProps {
@@ -11,11 +11,15 @@ interface EnableMFAProps {
     initialProvisioningUri?: string | null;
 }
 
-const EnableMFA = ({ onEnabled, initialQrCode = null, initialProvisioningUri = null }: EnableMFAProps) => {
+const EnableMFA: React.FC<EnableMFAProps> = ({
+    onEnabled,
+    initialQrCode = null,
+    initialProvisioningUri = null,
+}) => {
     const { initiateMfaSetup } = useAuth();
     const [qrCode, setQrCode] = useState<string | null>(initialQrCode);
     const [provisioningUri, setProvisioningUri] = useState<string | null>(initialProvisioningUri);
-    const [errorMsg, setErrorMsg] = useState('');
+    const [errorMsg, setErrorMsg] = useState<string>('');
 
     const enableMfaMutation = useMutation({
         mutationFn: () => initiateMfaSetup(),
@@ -32,23 +36,22 @@ const EnableMFA = ({ onEnabled, initialQrCode = null, initialProvisioningUri = n
         },
     });
 
-    const handleEnableMfa = () => {
+    // Automatically run the MFA setup when this component mounts
+    useEffect(() => {
         setErrorMsg('');
         enableMfaMutation.mutate();
-    };
+    }, []);
 
     return (
         <div>
-            {!qrCode ? (
-                enableMfaMutation.status === 'pending' ? (
-                    <Button disabled>
-                        <Loader2 className="animate-spin" />
-                        Loading...
-                    </Button>
-                ) : (
-                    <Button onClick={handleEnableMfa}>Enable MFA</Button>
-                )
-            ) : (
+            {enableMfaMutation.status === 'pending' && (
+                <Button disabled>
+                    <Loader2 className="animate-spin mr-2" />
+                    Loading...
+                </Button>
+            )}
+
+            {qrCode && (
                 <div className="space-y-6">
                     <div>
                         <h2 className="text-2xl">Scan the QR Code on your authenticator app.</h2>
@@ -69,10 +72,11 @@ const EnableMFA = ({ onEnabled, initialQrCode = null, initialProvisioningUri = n
                         <p className="break-all">{provisioningUri}</p>
                     </div>
                     <Button variant="outline" onClick={() => onEnabled({ qrCode, provisioningUri })}>
-                        <MoveRight />Next
+                        <MoveRight className="mr-2" />Next
                     </Button>
                 </div>
             )}
+
             {errorMsg && <div className="text-red-500">{errorMsg}</div>}
         </div>
     );

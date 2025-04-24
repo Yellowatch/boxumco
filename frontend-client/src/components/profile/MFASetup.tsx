@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import EnableMFA from '@/components/authentication/EnableMFA';
 import ConfirmMFA from '@/components/authentication/ConfirmMFA';
 import DisableMFA from '@/components/authentication/DisableMFA';
 import StepsIndicator from '@/components/StepsIndicator';
 import { Button } from '@/components/ui/button';
-import { MoveLeft } from 'lucide-react';
+import { MoveLeft, MoveRight } from 'lucide-react';
 
 interface MFASetupProps {
     initialMfaEnabled: boolean;
@@ -15,14 +15,17 @@ interface EnableData {
     provisioningUri: string | null;
 }
 
-const MFASetup = ({ initialMfaEnabled }: MFASetupProps) => {
+const MFASetup: React.FC<MFASetupProps> = ({ initialMfaEnabled }) => {
     const [mfaEnabled, setMfaEnabled] = useState(initialMfaEnabled);
-    const [step, setStep] = useState<'enable' | 'confirm' | 'disable'>(
-        mfaEnabled ? 'disable' : 'enable'
+    const [step, setStep] = useState<'start' | 'enable' | 'confirm' | 'disable'>(
+        mfaEnabled ? 'disable' : 'start'
     );
     const [enableData, setEnableData] = useState<EnableData>({ qrCode: null, provisioningUri: null });
 
-    // Called when EnableMFA finishes (user clicks "Next")
+    // Called when user clicks "Begin MFA Setup"
+    const handleBegin = () => setStep('enable');
+
+    // Called when EnableMFA finishes
     const handleEnabled = (data: EnableData) => {
         setEnableData(data);
         setStep('confirm');
@@ -37,40 +40,47 @@ const MFASetup = ({ initialMfaEnabled }: MFASetupProps) => {
     // Called when MFA is disabled
     const handleDisabled = () => {
         setMfaEnabled(false);
-        setStep('enable');
+        setStep('start');
     };
 
-    // Allow the user to go back from the confirm step to the enable step.
-    const goBack = () => {
-        setStep('enable');
-    };
+    // Allow the user to go back from confirm to enable
+    const goBack = () => setStep('enable');
 
     return (
         <div>
-            {/* Only show the steps indicator when in the "confirm" phase */}
-            {step === 'confirm' && (
-                <StepsIndicator steps={['Enable MFA', 'Confirm MFA']} currentStep={1} />
+            {/* Step 0: Initial begin button */}
+            {step === 'start' && !mfaEnabled && (
+                <Button onClick={handleBegin}>
+                    <MoveRight className="mr-2" /> Enable MFA
+                </Button>
             )}
 
+            {/* Step 1: Enable MFA */}
             {step === 'enable' && (
-                <EnableMFA
-                    onEnabled={handleEnabled}
-                    initialQrCode={enableData.qrCode}
-                    initialProvisioningUri={enableData.provisioningUri}
-                />
+                <>
+                    <StepsIndicator steps={['Enable', 'Confirm']} currentStep={0} />
+                    <EnableMFA
+                        onEnabled={handleEnabled}
+                        initialQrCode={enableData.qrCode}
+                        initialProvisioningUri={enableData.provisioningUri}
+                    />
+                </>
             )}
 
+            {/* Step 2: Confirm MFA */}
             {step === 'confirm' && (
-                <div>
+                <>
+                    <StepsIndicator steps={['Enable', 'Confirm']} currentStep={1} />
                     <ConfirmMFA onConfirmed={handleConfirmed} />
                     <div className="flex justify-start mt-4">
                         <Button variant="outline" onClick={goBack}>
-                            <MoveLeft /> Previous
+                            <MoveLeft className="mr-2" /> Previous
                         </Button>
                     </div>
-                </div>
+                </>
             )}
 
+            {/* Step 3: Disable MFA */}
             {step === 'disable' && <DisableMFA onDisabled={handleDisabled} />}
         </div>
     );
