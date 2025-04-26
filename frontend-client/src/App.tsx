@@ -13,6 +13,7 @@ import ProfilePage from '@/pages/ProfilePage';
 import HomePage from '@/pages/HomePage';
 import RegisterPage from '@/pages/RegisterPage';
 import LoginPage from '@/pages/LoginPage';
+import ContactUsPage from './pages/ContactUsPage';
 
 import ConfirmHandler from '@/handlers/ConfirmHandler';
 
@@ -33,6 +34,10 @@ function App() {
                                 <Route
                                     path="/api/users/confirm-email"
                                     element={<ConfirmHandler />}
+                                />
+                                <Route
+                                    path="/contact-us"
+                                    element={<ContactUsPage />}
                                 />
                                 <Route element={<PrivateRoute />}>
                                     <Route path="/profile" element={<ProfilePage />} />

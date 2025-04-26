@@ -11,7 +11,7 @@ const HomePage = () => {
       />
 
       {/* Main Section with reduced top padding */}
-      <section className="relative z-10 py-0 my-0 flex flex-col md:flex-row items-center h-screen">
+      <section className="px-4 md:px-8 relative z-10 py-0 my-0 flex flex-col md:flex-row items-center h-screen">
         {/* Left Side: Heading & Button */}
         <div className="max-w-lg space-y-4 px-4 md:px-0 md:w-1/2 pt-20 md:pt-0">
           <h1 className="text-4xl font-bold text-white sm:text-5xl">

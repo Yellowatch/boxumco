@@ -136,7 +136,7 @@ function NavItemsCentre() {
             <NavigationMenu>
                 <NavigationMenuList>
                     <NavigationMenuItem>
-                        <NavigationMenuLink href="/contact/" className={navigationMenuTriggerStyle()}>Contact</NavigationMenuLink>
+                        <NavigationMenuLink href="/contact-us/" className={navigationMenuTriggerStyle()}>Contact</NavigationMenuLink>
                     </NavigationMenuItem>
                 </NavigationMenuList>
             </NavigationMenu>

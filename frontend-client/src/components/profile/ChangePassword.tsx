@@ -96,68 +96,66 @@ const ChangePassword = () => {
     }
 
     return (
-        <Card>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <FormField
-                        control={form.control}
-                        name="current_password"
-                        render={({ field }: { field: any }) => (
-                            <FormItem>
-                                <FormLabel>Current Password</FormLabel>
-                                <FormControl>
-                                    <Input {...field} type="password" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="new_password"
-                        render={({ field }: { field: any }) => (
-                            <FormItem>
-                                <FormLabel>New Password</FormLabel>
-                                <FormControl>
-                                    <Input {...field} type="password" />
-                                </FormControl>
-                                <FormDescription>Must be at least 8 characters.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="confirm_password"
-                        render={({ field }: { field: any }) => (
-                            <FormItem>
-                                <FormLabel>Confirm Password</FormLabel>
-                                <FormControl>
-                                    <Input {...field} type="password" />
-                                </FormControl>
-                                <FormDescription>Must match the new password.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    {errorMsg && (
-                        <Alert variant="destructive">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>Error</AlertTitle>
-                            <AlertDescription>{errorMsg}</AlertDescription>
-                        </Alert>
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                    control={form.control}
+                    name="current_password"
+                    render={({ field }: { field: any }) => (
+                        <FormItem>
+                            <FormLabel>Current Password</FormLabel>
+                            <FormControl>
+                                <Input {...field} type="password" />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
                     )}
-                    {changePasswordMutation.status === 'pending' ? (
-                        <Button disabled>
-                            <Loader2 className="animate-spin" />
-                            Loading...
-                        </Button>
-                    ) : (
-                        <Button type="submit">Change Password</Button>
+                />
+                <FormField
+                    control={form.control}
+                    name="new_password"
+                    render={({ field }: { field: any }) => (
+                        <FormItem>
+                            <FormLabel>New Password</FormLabel>
+                            <FormControl>
+                                <Input {...field} type="password" />
+                            </FormControl>
+                            <FormDescription>Must be at least 8 characters.</FormDescription>
+                            <FormMessage />
+                        </FormItem>
                     )}
-                </form>
-            </Form>
-        </Card>
+                />
+                <FormField
+                    control={form.control}
+                    name="confirm_password"
+                    render={({ field }: { field: any }) => (
+                        <FormItem>
+                            <FormLabel>Confirm Password</FormLabel>
+                            <FormControl>
+                                <Input {...field} type="password" />
+                            </FormControl>
+                            <FormDescription>Must match the new password.</FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                {errorMsg && (
+                    <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>{errorMsg}</AlertDescription>
+                    </Alert>
+                )}
+                {changePasswordMutation.status === 'pending' ? (
+                    <Button disabled>
+                        <Loader2 className="animate-spin" />
+                        Loading...
+                    </Button>
+                ) : (
+                    <Button type="submit">Change Password</Button>
+                )}
+            </form>
+        </Form>
     );
 };
 

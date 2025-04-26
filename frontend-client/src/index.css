@@ -21,6 +21,9 @@
   --color-secondary: #2c5282; 
   /* this is the special colour that stands out */
   --color-accent: #6C37E0;
+
+  --color-gray-dark: oklch(0.21 0.034 264.665);
+  --color-gray: oklch(0.985 0.002 247.839);
 }
 
 @layer utilities {
@@ -36,12 +39,12 @@
   .dimmed-text {
     @apply text-sm text-gray-500;
   }
+  .section {
+    @apply py-12 px-4 md:px-8 bg-gray dark:bg-gray-dark;
+  }
 }
 
 @layer base {
-  section {
-    @apply py-12 px-4 md:px-8 my-8;
-  }
   h1 {
     @apply text-4xl font-bold tracking-tight text-primary-dark dark:text-primary sm:text-5xl;
   }

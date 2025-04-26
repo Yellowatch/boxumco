@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { Card, CardContent } from '@/components/ui/card';
 
 const ProfilePage = () => {
     const { fetchUserDetails } = useAuth();
@@ -19,7 +20,7 @@ const ProfilePage = () => {
     });
 
     return (
-        <div className='bg-primary dark:bg-dark dark:text-white'>
+        <div className='section'>
             {/* Heading */}
             <div className='container w-2/3'>
                 <h1>Profile Page</h1>
@@ -45,7 +46,11 @@ const ProfilePage = () => {
                     </Alert>
                 ) : (
                     // Once data is loaded, display the form
-                    <UpdateProfileForm values={data.data} />
+                    <Card>
+                        <CardContent>
+                            <UpdateProfileForm values={data.data} />
+                        </CardContent>
+                    </Card>
                 )}
             </div>
             <hr />
@@ -77,7 +82,11 @@ const ProfilePage = () => {
                 <p className='dimmed-text'>
                     Update your password associated with your account.
                 </p>
-                <ChangePassword />
+                <Card>
+                    <CardContent>
+                        <ChangePassword />
+                    </CardContent>
+                </Card>
             </div>
             <hr />
 

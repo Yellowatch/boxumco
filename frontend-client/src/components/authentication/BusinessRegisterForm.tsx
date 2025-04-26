@@ -25,7 +25,8 @@ import {
     AlertDescription,
     AlertTitle,
 } from "@/components/ui/alert";
-import Card from "@/components/Card";
+// import Card from "@/components/Card";
+import { Card, CardContent } from '@/components/ui/card';
 import { useMutation } from '@tanstack/react-query';
 
 const formSchema = z.object({
@@ -174,275 +175,277 @@ const BusinessRegisterForm = () => {
     return (
         <div className="flex justify-center items-center">
             <Card>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                        <FormField
-                            control={form.control}
-                            name="first_name"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>First Name</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormDescription>Only your first name.</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
+                <CardContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                            <FormField
+                                control={form.control}
+                                name="first_name"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>First Name</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormDescription>Only your first name.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="last_name"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>Last Name</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormDescription>Enter only your last name.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="dob"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>Date of Birth</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} type="date" />
+                                        </FormControl>
+                                        <FormDescription>Enter your date of birth.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} type="email" />
+                                        </FormControl>
+                                        <FormDescription>This will be used to sign in.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="number"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col items-start">
+                                        <FormLabel className="text-left">Phone Number</FormLabel>
+                                        <FormControl className="w-full">
+                                            <PhoneInput defaultCountry="AU" placeholder="Enter a phone number" {...field} />
+                                        </FormControl>
+                                        <FormDescription className="text-left">Enter a phone number</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="address"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>Address</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormDescription>Enter your home address.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="postcode"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>Postcode</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormDescription>Enter a valid postcode.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="company_name"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>Company Name</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormDescription>Enter your company name.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="company_number"
+                                render={({ field }) => (
+                                    <FormItem className="flex flex-col items-start">
+                                        <FormLabel className="text-left">Company Phone Number</FormLabel>
+                                        <FormControl className="w-full">
+                                            <PhoneInput defaultCountry="AU" placeholder="Enter a phone number" {...field} />
+                                        </FormControl>
+                                        <FormDescription className="text-left">Enter the company phone number</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="company_address"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>Company Address</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormDescription>Enter your company address.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="company_postcode"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>Company Postcode</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormDescription>Enter the company postcode.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="company_type"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>Company Type</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormDescription>What type of company are you?</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="company_description"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>Company Description</FormLabel>
+                                        <FormControl>
+                                            <Textarea placeholder="Tell us a little bit about your business" {...field} />
+                                        </FormControl>
+                                        <FormDescription>
+                                            Describe your business to customers in less than 250 characters.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="company_logo"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>Logo</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                accept=".jpg, .jpeg, .png, .svg, .ico"
+                                                type="file"
+                                                onChange={(e) => field.onChange(e.target.files ? e.target.files[0] : null)}
+                                            />
+                                        </FormControl>
+                                        <FormDescription>Upload your company logo.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="subcategories"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>Company Subcategories</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} />
+                                        </FormControl>
+                                        <FormDescription>
+                                            Add subcategories for your business so users can find you easier.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>Password</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} type="password" />
+                                        </FormControl>
+                                        <FormDescription>
+                                            This will be used to sign in. Must be at least 8 characters.
+                                        </FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="confirm_password"
+                                render={({ field }: { field: any }) => (
+                                    <FormItem>
+                                        <FormLabel>Confirm Password</FormLabel>
+                                        <FormControl>
+                                            <Input {...field} type="password" />
+                                        </FormControl>
+                                        <FormDescription>Re-enter your password.</FormDescription>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            {errorMsg && (
+                                <Alert variant="destructive">
+                                    <AlertCircle className="h-4 w-4" />
+                                    <AlertTitle>Error</AlertTitle>
+                                    <AlertDescription>{errorMsg}</AlertDescription>
+                                </Alert>
                             )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="last_name"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Last Name</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormDescription>Enter only your last name.</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
+                            {registerMutation.status === 'pending' ? (
+                                <Button disabled>
+                                    <Loader2 className="animate-spin" />
+                                    Loading...
+                                </Button>
+                            ) : (
+                                <Button type="submit">Submit</Button>
                             )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="dob"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Date of Birth</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} type="date" />
-                                    </FormControl>
-                                    <FormDescription>Enter your date of birth.</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} type="email" />
-                                    </FormControl>
-                                    <FormDescription>This will be used to sign in.</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="number"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col items-start">
-                                    <FormLabel className="text-left">Phone Number</FormLabel>
-                                    <FormControl className="w-full">
-                                        <PhoneInput defaultCountry="AU" placeholder="Enter a phone number" {...field} />
-                                    </FormControl>
-                                    <FormDescription className="text-left">Enter a phone number</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="address"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Address</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormDescription>Enter your home address.</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="postcode"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Postcode</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormDescription>Enter a valid postcode.</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="company_name"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Company Name</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormDescription>Enter your company name.</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="company_number"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col items-start">
-                                    <FormLabel className="text-left">Company Phone Number</FormLabel>
-                                    <FormControl className="w-full">
-                                        <PhoneInput defaultCountry="AU" placeholder="Enter a phone number" {...field} />
-                                    </FormControl>
-                                    <FormDescription className="text-left">Enter the company phone number</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="company_address"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Company Address</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormDescription>Enter your company address.</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="company_postcode"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Company Postcode</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormDescription>Enter the company postcode.</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="company_type"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Company Type</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormDescription>What type of company are you?</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="company_description"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Company Description</FormLabel>
-                                    <FormControl>
-                                        <Textarea placeholder="Tell us a little bit about your business" {...field} />
-                                    </FormControl>
-                                    <FormDescription>
-                                        Describe your business to customers in less than 250 characters.
-                                    </FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="company_logo"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Logo</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            accept=".jpg, .jpeg, .png, .svg, .ico"
-                                            type="file"
-                                            onChange={(e) => field.onChange(e.target.files ? e.target.files[0] : null)}
-                                        />
-                                    </FormControl>
-                                    <FormDescription>Upload your company logo.</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="subcategories"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Company Subcategories</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormDescription>
-                                        Add subcategories for your business so users can find you easier.
-                                    </FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} type="password" />
-                                    </FormControl>
-                                    <FormDescription>
-                                        This will be used to sign in. Must be at least 8 characters.
-                                    </FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="confirm_password"
-                            render={({ field }: { field: any }) => (
-                                <FormItem>
-                                    <FormLabel>Confirm Password</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} type="password" />
-                                    </FormControl>
-                                    <FormDescription>Re-enter your password.</FormDescription>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {errorMsg && (
-                            <Alert variant="destructive">
-                                <AlertCircle className="h-4 w-4" />
-                                <AlertTitle>Error</AlertTitle>
-                                <AlertDescription>{errorMsg}</AlertDescription>
-                            </Alert>
-                        )}
-                        {registerMutation.status === 'pending' ? (
-                            <Button disabled>
-                                <Loader2 className="animate-spin" />
-                                Loading...
-                            </Button>
-                        ) : (
-                            <Button type="submit">Submit</Button>
-                        )}
-                    </form>
-                </Form>
-            </Card>
-        </div>
+                        </form>
+                    </ Form>
+                </ CardContent>
+            </ Card>
+        </ div>
     );
 }
 

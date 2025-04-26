@@ -121,117 +121,15 @@ const UpdateProfileForm = ({ values }: { values: ProfileValues }) => {
     }
 
     return (
-        <Card>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <div className='md:flex gap-10 space-y-6 md:space-y-0'>
-                        <FormField
-                            control={form.control}
-                            name="first_name"
-                            render={({ field }: { field: any }) => (
-                                <FormItem className='flex-auto'>
-                                    <FormLabel>First Name</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="last_name"
-                            render={({ field }: { field: any }) => (
-                                <FormItem className='flex-auto'>
-                                    <FormLabel>Last Name</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className='md:flex gap-10 space-y-6 md:space-y-0'>
                     <FormField
                         control={form.control}
-                        name="email"
+                        name="first_name"
                         render={({ field }: { field: any }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input {...field} type="email" disabled />
-                                </FormControl>
-                                <FormDescription>
-                                    This is used for signing in, you cannot change this.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <div className='md:flex gap-10 space-y-6 md:space-y-0'>
-                        <FormField
-                            control={form.control}
-                            name="number"
-                            render={({ field }) => (
-                                <FormItem className="flex flex-col items-start md:flex-1">
-                                    <FormLabel className="text-left">Phone Number</FormLabel>
-                                    <FormControl className="w-full">
-                                        <PhoneInput defaultCountry="AU" placeholder="Enter a phone number" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="dob"
-                            render={({ field }: { field: any }) => (
-                                <FormItem className='md:flex-none'>
-                                    <FormLabel>Date of Birth</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} type="date" />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                    <div className='md:flex gap-10 space-y-6 md:space-y-0'>
-                        <FormField
-                            control={form.control}
-                            name="address"
-                            render={({ field }: { field: any }) => (
-                                <FormItem className='md:flex-1'>
-                                    <FormLabel>Address</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="postcode"
-                            render={({ field }: { field: any }) => (
-                                <FormItem className='md:flex-none'>
-                                    <FormLabel>Postcode</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                    <FormField
-                        control={form.control}
-                        name="company_name"
-                        render={({ field }: { field: any }) => (
-                            <FormItem>
-                                <FormLabel>
-                                    Company Name <span className='font-extralight'>(optional)</span>
-                                </FormLabel>
+                            <FormItem className='flex-auto'>
+                                <FormLabel>First Name</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
                                 </FormControl>
@@ -239,24 +137,124 @@ const UpdateProfileForm = ({ values }: { values: ProfileValues }) => {
                             </FormItem>
                         )}
                     />
-                    {errorMsg && (
-                        <Alert variant="destructive">
-                            <AlertCircle className="h-4 w-4" />
-                            <AlertTitle>Error</AlertTitle>
-                            <AlertDescription>{errorMsg}</AlertDescription>
-                        </Alert>
+                    <FormField
+                        control={form.control}
+                        name="last_name"
+                        render={({ field }: { field: any }) => (
+                            <FormItem className='flex-auto'>
+                                <FormLabel>Last Name</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }: { field: any }) => (
+                        <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                                <Input {...field} type="email" disabled />
+                            </FormControl>
+                            <FormDescription>
+                                This is used for signing in, you cannot change this.
+                            </FormDescription>
+                            <FormMessage />
+                        </FormItem>
                     )}
-                    {updateUserMutation.status === 'pending' ? (
-                        <Button disabled>
-                            <Loader2 className="animate-spin" />
-                            Loading...
-                        </Button>
-                    ) : (
-                        <Button type="submit">Update Account</Button>
+                />
+                <div className='md:flex gap-10 space-y-6 md:space-y-0'>
+                    <FormField
+                        control={form.control}
+                        name="number"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col items-start md:flex-1">
+                                <FormLabel className="text-left">Phone Number</FormLabel>
+                                <FormControl className="w-full">
+                                    <PhoneInput defaultCountry="AU" placeholder="Enter a phone number" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="dob"
+                        render={({ field }: { field: any }) => (
+                            <FormItem className='md:flex-none'>
+                                <FormLabel>Date of Birth</FormLabel>
+                                <FormControl>
+                                    <Input {...field} type="date" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+                <div className='md:flex gap-10 space-y-6 md:space-y-0'>
+                    <FormField
+                        control={form.control}
+                        name="address"
+                        render={({ field }: { field: any }) => (
+                            <FormItem className='md:flex-1'>
+                                <FormLabel>Address</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="postcode"
+                        render={({ field }: { field: any }) => (
+                            <FormItem className='md:flex-none'>
+                                <FormLabel>Postcode</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                </div>
+                <FormField
+                    control={form.control}
+                    name="company_name"
+                    render={({ field }: { field: any }) => (
+                        <FormItem>
+                            <FormLabel>
+                                Company Name <span className='font-extralight'>(optional)</span>
+                            </FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
                     )}
-                </form>
-            </Form>
-        </Card>
+                />
+                {errorMsg && (
+                    <Alert variant="destructive">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>{errorMsg}</AlertDescription>
+                    </Alert>
+                )}
+                {updateUserMutation.status === 'pending' ? (
+                    <Button disabled>
+                        <Loader2 className="animate-spin" />
+                        Loading...
+                    </Button>
+                ) : (
+                    <Button type="submit">Update Account</Button>
+                )}
+            </form>
+        </Form>
     );
 };
 
